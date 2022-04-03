@@ -5,7 +5,7 @@ Este é um projeto de sistema de vendas do curso de Pós Graduação da Puc Mina
 
 # Diagrama de casos de uso
 
-![alt text](https://github.com/leoee/sistema-de-vendas/blob/main/images/UseCases.png)<br>
+![alt text](https://github.com/leoee/sistema-de-vendas/blob/main/images/UseCases.jpg)<br>
 
 
 
