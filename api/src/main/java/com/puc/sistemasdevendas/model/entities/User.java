@@ -1,6 +1,7 @@
 package com.puc.sistemasdevendas.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,7 +27,7 @@ public class User {
     private String cpf;
     @Size( min = 7, message = "Password must have at least 7 chars")
     private String password;
-    @NotEmpty(message = "role can not be empty")
+    @Null(message = "role can not be set")
     private String role;
     @NotEmpty(message = "cellphoneNumber can not be empty")
     private String cellphoneNumber;
