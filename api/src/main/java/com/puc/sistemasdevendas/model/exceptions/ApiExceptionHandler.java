@@ -19,9 +19,15 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(globalError);
     }
 
-    @ExceptionHandler(UserNotAuthorized.class)
-    public ResponseEntity<GlobalError> duplicateEntity(UserNotAuthorized e) {
+    @ExceptionHandler(UserNotAuthorizedException.class)
+    public ResponseEntity<GlobalError> duplicateEntity(UserNotAuthorizedException e) {
         GlobalError globalError = new GlobalError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(globalError);
+    }
+
+    @ExceptionHandler(ForbidenException.class)
+    public ResponseEntity<GlobalError> forbiddenError(ForbidenException e) {
+        GlobalError globalError = new GlobalError(HttpStatus.FORBIDDEN.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(globalError);
     }
 }

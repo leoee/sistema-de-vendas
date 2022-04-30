@@ -1,8 +1,7 @@
 package com.puc.sistemasdevendas.model.services;
 
 import com.puc.sistemasdevendas.model.entities.UserLogin;
-import com.puc.sistemasdevendas.model.exceptions.InternalErrorException;
-import com.puc.sistemasdevendas.model.exceptions.UserNotAuthorized;
+import com.puc.sistemasdevendas.model.exceptions.UserNotAuthorizedException;
 import com.puc.sistemasdevendas.model.helpers.ApplicationProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -44,7 +43,7 @@ public class SignInOutService {
                 return jwtToken;
             } else {
                 this.logger.warn("An attempt to authorize was made | " + userPayload.getEmail());
-                throw new UserNotAuthorized("Username and/or password invalid");
+                throw new UserNotAuthorizedException("Username and/or password invalid");
             }
         } catch (Exception ex) {
             this.logger.error("Failed to authorize user: " + ex.getMessage());
