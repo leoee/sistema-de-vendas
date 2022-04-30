@@ -18,4 +18,10 @@ public class ApiExceptionHandler {
         GlobalError globalError = new GlobalError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(globalError);
     }
+
+    @ExceptionHandler(UserNotAuthorized.class)
+    public ResponseEntity<GlobalError> duplicateEntity(UserNotAuthorized e) {
+        GlobalError globalError = new GlobalError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(globalError);
+    }
 }
