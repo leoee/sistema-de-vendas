@@ -31,7 +31,7 @@ public class SignInOutService {
                         .setIssuedAt(new Date())
                         .setExpiration(
                                 Date.from(
-                                        LocalDateTime.now().plusMinutes(15L)
+                                        LocalDateTime.now().plusHours(8L)
                                                 .atZone(ZoneId.systemDefault())
                                                 .toInstant()))
                         .signWith(
