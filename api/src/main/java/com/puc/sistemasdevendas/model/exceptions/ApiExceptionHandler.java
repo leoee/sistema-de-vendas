@@ -30,4 +30,10 @@ public class ApiExceptionHandler {
         GlobalError globalError = new GlobalError(HttpStatus.FORBIDDEN.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(globalError);
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<GlobalError> notFoundError(NotFoundException e) {
+        GlobalError globalError = new GlobalError(HttpStatus.NOT_FOUND.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(globalError);
+    }
 }

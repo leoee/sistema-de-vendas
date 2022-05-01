@@ -1,6 +1,6 @@
 package com.puc.sistemasdevendas.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,9 +12,9 @@ import javax.validation.constraints.Size;
 
 @Data
 @Document(collection = "User")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     @Id
-    @JsonIgnore
     @Null(message = "Id can not be set")
     private String id;
     @NotEmpty(message = "Name can not be empty")
