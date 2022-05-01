@@ -2,13 +2,18 @@ package com.puc.sistemasdevendas.model.services;
 
 import com.puc.sistemasdevendas.model.entities.Item;
 import com.puc.sistemasdevendas.model.exceptions.ForbidenException;
-import com.puc.sistemasdevendas.model.exceptions.InternalErrorException;
 import com.puc.sistemasdevendas.model.exceptions.NotFoundException;
 import com.puc.sistemasdevendas.model.helpers.DecodeToken;
 import com.puc.sistemasdevendas.model.repositories.ItemRepository;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 public class ItemService {
@@ -16,6 +21,8 @@ public class ItemService {
     private ItemRepository itemRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
     @Autowired
     private DecodeToken decodeToken;
     private final Logger logger = Logger.getLogger(ItemService.class);
@@ -26,7 +33,7 @@ public class ItemService {
             return this.itemRepository.insert(item);
         } catch (Exception e) {
             this.logger.error("Failed to create item: " + e.getMessage());
-            throw new InternalErrorException("Failed to create item: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -44,6 +51,29 @@ public class ItemService {
             throw e;
         }
 
+    }
+
+    public List<Item> getAllItems(boolean withStockQuantity, Integer minPrice, Integer maxPrice, String name) {
+        // Needs refactor
+        Query query = new Query();
+
+        if (name != null) {
+            query.addCriteria(where("name").is(name));
+        }
+
+        if (minPrice != null) {
+            query.addCriteria(where("price").gte(minPrice));
+        }
+
+        if (maxPrice != null) {
+            query.addCriteria(where("price").lte(maxPrice));
+        }
+
+        if (withStockQuantity) {
+            query.addCriteria(where("stockQuantity").gte(1));
+        }
+
+        return this.mongoTemplate.find(query, Item.class);
     }
 
     private void authorizeOperation(String token, String operation) {

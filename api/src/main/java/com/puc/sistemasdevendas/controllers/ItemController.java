@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ItemController {
@@ -20,6 +22,17 @@ public class ItemController {
         return ResponseEntity.ok(this.itemService.createItem(bearerToken.substring(6), requestItemPayload));
     }
 
+    @RequestMapping(value = "/items", method = RequestMethod.GET)
+    ResponseEntity<List<Item>> getAllitems(@RequestParam("stockQuantity") Optional<Boolean> withStockQuantity,
+                                           @RequestParam("minPrice") Optional<Integer> minPrice,
+                                           @RequestParam("maxPrice") Optional<Integer> maxPrice,
+                                           @RequestParam("name") Optional<String> name) {
+        return ResponseEntity.ok(this.itemService.getAllItems(
+                Boolean.TRUE.equals(withStockQuantity.orElse(null)),
+                minPrice.orElse(null), maxPrice.orElse(null),
+                name.orElse(null)));
+    }
+
     @RequestMapping(value = "/items/{itemId}", method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteItem(@RequestHeader("Authorization") final String bearerToken,
                                     @PathVariable String itemId) {
@@ -30,16 +43,4 @@ public class ItemController {
             throw e;
         }
     }
-
-    /*@RequestMapping(value = "/users", method = RequestMethod.GET)
-    ResponseEntity<List<User>> getUsers(@RequestHeader("Authorization") final String bearerToken) {
-        return ResponseEntity.ok(this.userService.getUsers(bearerToken.substring(6)));
-    }
-
-    @RequestMapping(value = "/users/{userId}", method = RequestMethod.PATCH)
-    ResponseEntity<User> updateUser(@PathVariable String userId,
-                                    @RequestBody @Valid UserPatch requestUserPayload,
-                                    @RequestHeader("Authorization") final String bearerToken) {
-        return ResponseEntity.ok(this.userService.updateUser(bearerToken.substring(6), userId, requestUserPayload));
-    }*/
 }
