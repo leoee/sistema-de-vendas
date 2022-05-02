@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 @Data
-@Document(collection = "Item")
+@Document(collection = "Items")
 public class Item {
     @Id
     @Null(message = "Can not set id")

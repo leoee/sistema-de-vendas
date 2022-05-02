@@ -11,7 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 @Data
-@Document(collection = "User")
+@Document(collection = "Users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     @Id
