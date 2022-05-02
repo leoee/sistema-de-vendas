@@ -4,6 +4,7 @@ import com.puc.sistemasdevendas.model.entities.User;
 import com.puc.sistemasdevendas.model.entities.UserPatch;
 import com.puc.sistemasdevendas.model.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     ResponseEntity<User> createUser(@RequestBody @Valid User requestUserPayload) {
-        return ResponseEntity.ok(this.userService.createUser(requestUserPayload));
+        return new ResponseEntity<>(this.userService.createUser(requestUserPayload), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)

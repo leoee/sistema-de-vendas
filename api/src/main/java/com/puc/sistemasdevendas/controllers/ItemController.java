@@ -3,6 +3,7 @@ package com.puc.sistemasdevendas.controllers;
 import com.puc.sistemasdevendas.model.entities.Item;
 import com.puc.sistemasdevendas.model.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,8 @@ public class ItemController {
     @RequestMapping(value = "/items", method = RequestMethod.POST)
     ResponseEntity<Item> createItem(@RequestHeader("Authorization") final String bearerToken,
                                     @RequestBody @Valid Item requestItemPayload) {
-        return ResponseEntity.ok(this.itemService.createItem(bearerToken.substring(6), requestItemPayload));
+        return new ResponseEntity<>(this.itemService
+                .createItem(bearerToken.substring(6), requestItemPayload), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/items", method = RequestMethod.GET)
