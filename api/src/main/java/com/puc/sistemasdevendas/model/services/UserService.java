@@ -35,6 +35,8 @@ public class UserService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private DecodeToken decodeToken;
+    @Autowired
+    private ShoppingCartService shoppingCartService;
     private final Logger logger = Logger.getLogger(AuthorizeFilter.class);
     private ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -48,7 +50,9 @@ public class UserService {
             }
 
             this.logger.info("User created with email: " + user.getEmail());
-            return this.userRepository.insert(this.setDefaultUserValues(user));
+            User createdUser = this.userRepository.insert(this.setDefaultUserValues(user));
+            this.shoppingCartService.createShoppingCart(createdUser);
+            return createdUser;
         } catch (Exception e) {
             this.logger.error("Failed to create user: " + e.getMessage());
             throw e;
