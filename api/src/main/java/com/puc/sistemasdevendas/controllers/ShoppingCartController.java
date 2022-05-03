@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,5 +23,12 @@ public class ShoppingCartController {
                 bearerToken.substring(6),
                 shoppingCartItem.getItemId(),
                 shoppingCartItem.getQuantity()), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/shoppingCart/items/{itemId}", method = RequestMethod.DELETE)
+    ResponseEntity<?> deleteItem(@RequestHeader("Authorization") final String bearerToken,
+                                 @PathVariable("itemId") String itemId) {
+        this.shoppingCartService.deleteItemIntoSc(bearerToken.substring(6), itemId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ShoppingCartService {
@@ -101,6 +102,35 @@ public class ShoppingCartService {
         currentScList.add(this.buildNewShoppingCarItem(fetchedItem, quantity));
 
         return currentScList;
+    }
+
+    public void deleteItemIntoSc(String token, String itemId) {
+        String emailFromToken = this.decodeToken.getGetFromToken(token);
+
+        User fetchedUser = this.userRepository.findUserByEmail(emailFromToken).orElse(null);
+        if (fetchedUser == null) {
+            this.logger.error("Could not get user by email from token: " + emailFromToken);
+            throw new ForbidenException("Could not get user from token");
+        }
+        ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
+        if (fetchedSc == null) {
+            throw new ForbidenException("Could not find shopping cart from user");
+        }
+
+        int sizeBeforeDelete = fetchedSc.getShoppingCartItemList().size();
+
+        fetchedSc.setShoppingCartItemList(
+                fetchedSc.getShoppingCartItemList()
+                        .stream()
+                        .filter((shoppingCartItem -> !itemId.equals(shoppingCartItem.getItemId())))
+                        .collect(Collectors.toList())
+        );
+
+        if (sizeBeforeDelete == fetchedSc.getShoppingCartItemList().size()) {
+            throw new NotFoundException("Not found item inside shopping cart: " + itemId);
+        }
+
+        this.shoppingCartRepository.save(fetchedSc);
     }
 
 }
