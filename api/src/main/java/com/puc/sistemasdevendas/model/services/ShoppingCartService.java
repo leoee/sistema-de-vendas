@@ -43,15 +43,13 @@ public class ShoppingCartService {
     public ShoppingCart addItem(String token, String itemId, Integer quantity) {
         try {
             // Needs refactor
-            String emailFromToken = this.decodeToken.getGetFromToken(token);
 
             Item fetchedItem = this.itemRepository.findById(itemId).orElse(null);
             this.validateFetchedItem(fetchedItem, itemId);
 
-            User shoppingCartOwner = this.userRepository.findUserByEmail(emailFromToken).orElse(null);
-            this.validateUser(shoppingCartOwner, emailFromToken);
+            User fetchedUser = this.getUserFromToken(token);
 
-            ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(shoppingCartOwner.getId()).get();
+            ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).get();
 
             fetchedSc.getShoppingCartItemList().forEach((shoppingCartItem -> {
                 if (shoppingCartItem.getItemId().equals(itemId)) {
@@ -77,13 +75,6 @@ public class ShoppingCartService {
         }
     }
 
-    private void validateUser(User shoppingCartOwner, String emailFromToken) {
-        if (shoppingCartOwner == null) {
-            this.logger.error("Could not find user with email: " + emailFromToken);
-            throw new ForbidenException("Invalid token");
-        }
-    }
-
     private ShoppingCartItem buildNewShoppingCarItem(Item fetchedItem, Integer quantity) {
 
         ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
@@ -105,13 +96,7 @@ public class ShoppingCartService {
     }
 
     public void deleteItemIntoSc(String token, String itemId) {
-        String emailFromToken = this.decodeToken.getGetFromToken(token);
-
-        User fetchedUser = this.userRepository.findUserByEmail(emailFromToken).orElse(null);
-        if (fetchedUser == null) {
-            this.logger.error("Could not get user by email from token: " + emailFromToken);
-            throw new ForbidenException("Could not get user from token");
-        }
+        User fetchedUser = this.getUserFromToken(token);
         ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
         if (fetchedSc == null) {
             throw new ForbidenException("Could not find shopping cart from user");
@@ -131,6 +116,35 @@ public class ShoppingCartService {
         }
 
         this.shoppingCartRepository.save(fetchedSc);
+    }
+
+    public ShoppingCart getShoppingCart(String token, Boolean expandItems) {
+        User fetchedUser = this.getUserFromToken(token);
+        ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
+        if (fetchedSc == null) {
+            this.logger.error("Failed to find shopping cart from user: " + fetchedUser.getId());
+            throw new ForbidenException("Could not find shopping cart from user");
+        }
+
+        if (expandItems) {
+            fetchedSc.getShoppingCartItemList().forEach(shoppingCartItem -> {
+                shoppingCartItem.setItem(this.itemRepository.findById(shoppingCartItem.getItemId()).get());
+            });
+        }
+
+        return fetchedSc;
+    }
+
+    private User getUserFromToken(String token) {
+        String emailFromToken = this.decodeToken.getGetFromToken(token);
+
+        User fetchedUser = this.userRepository.findUserByEmail(emailFromToken).orElse(null);
+        if (fetchedUser == null) {
+            this.logger.error("Could not get user by email from token: " + emailFromToken);
+            throw new ForbidenException("Could not get user from token");
+        }
+
+        return fetchedUser;
     }
 
 }
