@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +38,8 @@ public class UserService {
     private DecodeToken decodeToken;
     @Autowired
     private ShoppingCartService shoppingCartService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Logger logger = Logger.getLogger(AuthorizeFilter.class);
     private ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -50,7 +53,8 @@ public class UserService {
             }
 
             this.logger.info("User created with email: " + user.getEmail());
-            User createdUser = this.userRepository.insert(this.setDefaultUserValues(user));
+            User createdUser = this.hideFields(this.userRepository.insert(this.setDefaultUserValues(user)));
+
             this.shoppingCartService.createShoppingCart(createdUser);
             return createdUser;
         } catch (Exception e) {
@@ -78,6 +82,8 @@ public class UserService {
             throw new ForbidenException("Not authorized to update user: " + userId);
         }
 
+        requestPayload.setPassword(bCryptPasswordEncoder.encode(requestPayload.getPassword()));
+
         Update update = new Update();
         Query query = new Query().addCriteria(where("_id").is(userId));
         query.fields().exclude("password");
@@ -91,7 +97,8 @@ public class UserService {
     public boolean checkUserCredentials(final String email, final String password) {
         Optional<User> fetchedUser = this.userRepository.findUserByEmail(email);
 
-        return fetchedUser.isPresent() && password.equals(fetchedUser.get().getPassword());
+        return fetchedUser.isPresent()
+                && bCryptPasswordEncoder.matches(password, fetchedUser.get().getPassword());
     }
 
     public boolean isAdminRole(String email) {
@@ -102,6 +109,13 @@ public class UserService {
 
     private User setDefaultUserValues(User user) {
         user.setRole(BASIC_ROLE);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
+        return user;
+    }
+
+    private User hideFields(User user) {
+        user.setPassword(null);
 
         return user;
     }
