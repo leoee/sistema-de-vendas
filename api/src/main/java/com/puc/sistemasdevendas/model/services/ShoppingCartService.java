@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +51,10 @@ public class ShoppingCartService {
             User fetchedUser = this.getUserFromToken(token);
 
             ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).get();
+
+            if (fetchedSc.getShoppingCartItemList() == null) {
+                fetchedSc.setShoppingCartItemList(new ArrayList<>());
+            }
 
             fetchedSc.getShoppingCartItemList().forEach((shoppingCartItem -> {
                 if (shoppingCartItem.getItemId().equals(itemId)) {
@@ -128,7 +133,8 @@ public class ShoppingCartService {
 
         if (expandItems) {
             fetchedSc.getShoppingCartItemList().forEach(shoppingCartItem -> {
-                shoppingCartItem.setItem(this.itemRepository.findById(shoppingCartItem.getItemId()).get());
+                Optional<Item> item = this.itemRepository.findById(shoppingCartItem.getItemId());
+                shoppingCartItem.setItem(item.orElse(null));
             });
         }
 
