@@ -25,7 +25,7 @@ public class SignInOutService {
     public String authorizeUser(UserLogin userPayload) throws UnsupportedEncodingException {
         try {
             if (this.userService.checkUserCredentials(userPayload.getEmail(), userPayload.getPassword())) {
-                String jwtToken = Jwts.builder()
+                return Jwts.builder()
                         .setSubject(userPayload.getEmail())
                         .setIssuer("localhost:8080")
                         .setIssuedAt(new Date())
@@ -39,8 +39,6 @@ public class SignInOutService {
                                 this.applicationProperties.getJwtKey().getBytes("UTF-8")
                         )
                         .compact();
-
-                return jwtToken;
             } else {
                 this.logger.warn("An attempt to authorize was made | " + userPayload.getEmail());
                 throw new UserNotAuthorizedException("Username and/or password invalid");

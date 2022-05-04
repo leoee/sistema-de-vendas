@@ -41,7 +41,7 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Logger logger = Logger.getLogger(AuthorizeFilter.class);
-    private ObjectMapper mapper = new ObjectMapper()
+    private final ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -77,7 +77,7 @@ public class UserService {
         String emailFromToken = this.decodeToken.getGetFromToken(jwtToken);
         Optional<User> fetchedUser = this.userRepository.findById(userId);
 
-        if (!fetchedUser.isPresent() || !emailFromToken.equals(fetchedUser.get().getEmail())) {
+        if (fetchedUser.isEmpty() || !emailFromToken.equals(fetchedUser.get().getEmail())) {
             this.logger.warn("Not authorized to update user: " + userId);
             throw new ForbidenException("Not authorized to update user: " + userId);
         }
@@ -102,9 +102,9 @@ public class UserService {
     }
 
     public boolean isAdminRole(String email) {
-        Optional<User> fetchedUser = this.userRepository.findUserByEmail(email);
+        User fetchedUser = this.userRepository.findUserByEmail(email).orElse(null);
 
-        return fetchedUser.isPresent() && ADM_ROLE.equals(fetchedUser.get().getRole());
+        return fetchedUser != null && ADM_ROLE.equals(fetchedUser.getRole());
     }
 
     private User setDefaultUserValues(User user) {
