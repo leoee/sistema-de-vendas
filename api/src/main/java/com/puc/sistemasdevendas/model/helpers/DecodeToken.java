@@ -2,13 +2,11 @@ package com.puc.sistemasdevendas.model.helpers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.puc.sistemasdevendas.controllers.configurations.AuthorizeFilter;
 import com.puc.sistemasdevendas.model.exceptions.InternalErrorException;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jboss.logging.Logger;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @Configuration
@@ -22,7 +20,7 @@ public class DecodeToken {
             String b64payload = pieces[1];
             return new String(Base64.decodeBase64(b64payload), "UTF-8");
 
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             this.logger.error("Failed to decode token: " + e.getMessage());
             throw new InternalErrorException("Failed to decode token");
         }
