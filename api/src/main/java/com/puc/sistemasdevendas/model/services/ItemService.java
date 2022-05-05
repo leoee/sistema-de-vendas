@@ -61,16 +61,16 @@ public class ItemService {
             query.addCriteria(where("name").is(name));
         }
 
-        if (minPrice != null) {
-            query.addCriteria(where("price").gte(minPrice));
-        }
-
-        if (maxPrice != null) {
-            query.addCriteria(where("price").lte(maxPrice));
-        }
-
         if (withStockQuantity) {
             query.addCriteria(where("stockQuantity").gte(1));
+        }
+
+        if (minPrice != null && maxPrice == null) {
+            query.addCriteria(where("price").gte(minPrice));
+        } else if (maxPrice != null && minPrice == null) {
+            query.addCriteria(where("price").lte(maxPrice));
+        } else if (minPrice != null) {
+            query.addCriteria(where("price").gte(minPrice).andOperator(where("price").lte(maxPrice)));
         }
 
         return this.mongoTemplate.find(query, Item.class);
