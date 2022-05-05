@@ -1,4 +1,4 @@
-# Sistema de Vendas
+# Sistema de Vendas [![<ORG_NAME>](https://circleci.com/gh/leoee/sistema-de-vendas.svg?style=svg)](https://app.circleci.com/pipelines/github/leoee/sistema-de-vendas?filter=all)
 Este é um projeto de sistema de vendas do curso de Pós Graduação da Puc Minas
 
 
