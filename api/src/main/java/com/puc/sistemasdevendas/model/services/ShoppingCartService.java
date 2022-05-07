@@ -15,9 +15,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +60,7 @@ public class ShoppingCartService {
                 }
             }));
 
-            fetchedSc.setShoppingCartItemList(this.updateShoppingCarList(fetchedSc, fetchedItem, quantity));
+            fetchedSc.setShoppingCartItemList(this.updateShoppingCartList(fetchedSc, fetchedItem, quantity));
             fetchedSc.setTotal(fetchedSc.getTotal() + fetchedItem.getPrice() * quantity);
 
             return this.shoppingCartRepository.save(fetchedSc);
@@ -90,7 +88,7 @@ public class ShoppingCartService {
         return shoppingCartItem;
     }
 
-    private List<ShoppingCartItem> updateShoppingCarList(ShoppingCart fetchedSc, Item fetchedItem, Integer quantity) {
+    private List<ShoppingCartItem> updateShoppingCartList(ShoppingCart fetchedSc, Item fetchedItem, Integer quantity) {
         List<ShoppingCartItem> currentScList = fetchedSc.getShoppingCartItemList() != null
                 ? fetchedSc.getShoppingCartItemList()
                 : new ArrayList<>();
@@ -103,22 +101,37 @@ public class ShoppingCartService {
     public void deleteItemIntoSc(String token, String itemId) {
         User fetchedUser = this.getUserFromToken(token);
         ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
+        Map<String, Integer> itemsInsideShoppingCart = new HashMap<>();
+
         if (fetchedSc == null) {
             throw new ForbidenException("Could not find shopping cart from user");
         }
 
         int sizeBeforeDelete = fetchedSc.getShoppingCartItemList().size();
 
+        Item fetchedItem = this.itemRepository.findById(itemId).orElse(null);
+        if (fetchedItem == null) {
+            throw new NotFoundException("Not found item: " + itemId);
+        }
+
         fetchedSc.setShoppingCartItemList(
                 fetchedSc.getShoppingCartItemList()
                         .stream()
-                        .filter((shoppingCartItem -> !itemId.equals(shoppingCartItem.getItemId())))
+                        .filter((shoppingCartItem -> {
+                            if (itemId.equals(shoppingCartItem.getItemId())) {
+                                itemsInsideShoppingCart.put(itemId, shoppingCartItem.getAmount());
+                                return false;
+                            }
+                            return true;
+                        }))
                         .collect(Collectors.toList())
         );
 
         if (sizeBeforeDelete == fetchedSc.getShoppingCartItemList().size()) {
             throw new NotFoundException("Not found item inside shopping cart: " + itemId);
         }
+
+        fetchedSc.setTotal(fetchedSc.getTotal() - (itemsInsideShoppingCart.get(itemId) * fetchedItem.getPrice()));
 
         this.shoppingCartRepository.save(fetchedSc);
     }
