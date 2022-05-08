@@ -1,0 +1,69 @@
+#main {
+  position: absolute;
+  display: inline;
+  width: 100%;
+  height: 100%;
+}
+
+#info {
+  position: absolute;
+  display: flex;
+  background-color: black;
+  width: 100%;
+  height: 90%;
+}
+
+#login {
+  margin-top: 10%;
+  width: 40%;
+}
+
+#login h1 {
+  margin-left: 15%;
+  color: white;
+}
+
+#login input {
+  width: 80%;
+  margin-left: 20%;
+  margin-right: 15%;
+  margin-top: 5%;
+}
+
+#buttons {
+  margin-top: 5%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-left: 5%;
+}
+
+#btn {
+  background-color: white;
+  color: black;
+  border-bottom: 10%;
+  border-radius: 12px;
+  padding: 2%;
+}
+
+#btn:hover {
+  background-color: rgb(211, 214, 205);
+}
+
+#separator {
+  margin: 2%;
+  width: 5%;
+  border-left: thick dotted #f1efef;
+}
+
+#offers {
+  width: 55%;
+  justify-content: center;
+  margin-right: 10%;
+}
+
+#offers h1 {
+  color: white;
+  margin-top: 5%;
+  justify-content: center;
+}
