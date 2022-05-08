@@ -94,6 +94,13 @@ public class UserService {
         return this.mongoTemplate.findAndModify(query, update, User.class);
     }
 
+    public User getCurrentUser(String token) {
+        String emailFromToken = this.decodeToken.getGetFromToken(token);
+        User fetchedUser = this.userRepository.findUserByEmail(emailFromToken).orElse(null);
+
+        return fetchedUser != null ? this.hideFields(fetchedUser) : null;
+    }
+
     public boolean checkUserCredentials(final String email, final String password) {
         Optional<User> fetchedUser = this.userRepository.findUserByEmail(email);
 

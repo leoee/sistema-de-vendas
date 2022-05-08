@@ -17,6 +17,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    ResponseEntity<User> getCurrentUser(@RequestHeader("Authorization") final String bearerToken) {
+        return ResponseEntity.ok(this.userService.getCurrentUser(bearerToken.substring(6)));
+    }
+
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     ResponseEntity<User> createUser(@RequestBody @Valid User requestUserPayload) {
         return new ResponseEntity<>(this.userService.createUser(requestUserPayload), HttpStatus.CREATED);
