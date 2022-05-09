@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import {NgbCarouselConfig} from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { SignInData } from 'src/app/data/dtos/signin-data.model';
 
 @Component({
   selector: 'app-main',
@@ -8,19 +14,51 @@ import {NgbCarouselConfig} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./main.component.css'],
   providers: [NgbCarouselConfig]
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
+  public userData!: FormGroup
 
-  showNavigationArrows = true;
-  showNavigationIndicators = false;
-  images = [1055, 194, 368].map((n) => `https://picsum.photos/id/${n}/900/500`);
+  public showNavigationArrows = true;
+  public showNavigationIndicators = false;
+  public images = [1055, 194, 368].map((n) => `https://picsum.photos/id/${n}/900/500`);
 
-  constructor(config: NgbCarouselConfig) {
-    // customize default values of carousels used by this component tree
+  private unsub$ = new Subject<void>();
+
+  public constructor(
+    private config: NgbCarouselConfig,
+    private readonly formBuilder: FormBuilder,
+    private readonly authService: AuthService) {
     config.showNavigationArrows = true;
     config.showNavigationIndicators = true;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
+    this.initializeForm();
+  }
+
+  public ngOnDestroy (): void {
+    this.unsub$.next()
+    this.unsub$.complete()
+  }
+
+  public signIn (credentials: SignInData): void {
+    console.log(credentials);
+    this.authService.signIn(credentials)
+      .pipe(takeUntil(this.unsub$))
+      .subscribe(
+        () => {
+          console.log('logou')
+        },
+        ({ error: httpError }: HttpErrorResponse) => {
+          console.log('erro')
+        }
+      )
+  }
+
+  private initializeForm(): void {
+    this.userData = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(7)]]
+    })
   }
 
 }

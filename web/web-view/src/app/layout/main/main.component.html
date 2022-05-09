@@ -3,11 +3,11 @@
   <div id="info">
     <div id="login">
       <h1>Conectar-se</h1>
-      <div class="form-group">
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email *">
-        <input type="password" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Senha *">
+      <div class="form-group" [formGroup]="userData">
+        <input type="email" class="form-control" id="emailInput" formControlName="email" placeholder="Email *">
+        <input type="password" class="form-control" id="passwordInput" formControlName="password" placeholder="Senha *">
         <div id="buttons">
-          <button id="btn" type="submit">Entrar</button>
+          <button id="btn" type="submit" (click)="signIn(userData.value)">Entrar</button>
           <button id="btn" routerLink="/create-user">Criar Conta</button>
         </div>
       </div>
