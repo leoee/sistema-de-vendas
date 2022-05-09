@@ -43,6 +43,6 @@ public class AuthorizeFilter extends OncePerRequestFilter {
     private boolean shouldValidateAuthorization(HttpServletRequest request) {
         final String endpoint = request.getRequestURI().substring(1) + ":" + request.getMethod();
         return !this.applicationProperties
-                .getAuthResourcesIgnores().contains(endpoint);
+                .getAuthResourcesIgnores().contains(endpoint.replace("api/", ""));
     }
 }
