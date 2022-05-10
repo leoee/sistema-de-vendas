@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 public class ItemController {
     @Autowired
     private ItemService itemService;

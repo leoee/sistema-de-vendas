@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 public class ShoppingCartController {
     @Autowired
     private ShoppingCartService shoppingCartService;
