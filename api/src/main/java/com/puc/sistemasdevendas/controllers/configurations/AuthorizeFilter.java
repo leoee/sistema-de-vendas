@@ -21,11 +21,7 @@ public class AuthorizeFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if ("OPTIONS".equals(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            filterChain.doFilter(request, response);
-            return;
-        }
+        this.configureCors(request,response,filterChain);
 
         String authorizationHeader = request.getHeader("Authorization");
 
@@ -50,5 +46,12 @@ public class AuthorizeFilter extends OncePerRequestFilter {
         final String endpoint = request.getRequestURI().substring(1) + ":" + request.getMethod();
         return !this.applicationProperties
                 .getAuthResourcesIgnores().contains(endpoint.replace("api/", ""));
+    }
+
+    private void configureCors(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if ("OPTIONS".equals(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            filterChain.doFilter(request, response);
+        }
     }
 }
