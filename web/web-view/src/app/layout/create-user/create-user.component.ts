@@ -29,14 +29,17 @@ export class CreateUserComponent implements OnInit, OnDestroy {
 
   private initializeForm(): void {
     this.userData = this.formBuilder.group({
-      fullName: ['', [Validators.required]],
+      name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(7)]],
       cpf: ['', [Validators.required]],
-      cellphone: ['', [Validators.required]],
-      address: ['', [Validators.required]],
-      zipCode: ['', [Validators.required]],
-      city: ['', [Validators.required]],
+      cellphoneNumber: ['', [Validators.required]],
+      address: this.formBuilder.group({
+        place: ['', [Validators.required]],
+        zipCode: ['', [Validators.required]],
+        city: ['', [Validators.required]],
+      })
+
     })
   }
 
