@@ -6,6 +6,7 @@ import {NgbCarouselConfig} from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { SignInData } from 'src/app/data/dtos/signin-data.model';
 
 @Component({
@@ -26,7 +27,8 @@ export class MainComponent implements OnInit, OnDestroy {
   public constructor(
     private config: NgbCarouselConfig,
     private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService) {
+    private readonly authService: AuthService,
+    private readonly notificationService: NotificationService) {
     config.showNavigationArrows = true;
     config.showNavigationIndicators = true;
   }
@@ -46,10 +48,10 @@ export class MainComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsub$))
       .subscribe(
         () => {
-          console.log('logou')
+          this.notificationService.success('Ei!', 'Login efetuado com sucesso!')
         },
         ({ error: httpError }: HttpErrorResponse) => {
-          console.log('erro')
+          this.notificationService.error('Ops!', 'E-mail ou senha inválida.')
         }
       )
   }

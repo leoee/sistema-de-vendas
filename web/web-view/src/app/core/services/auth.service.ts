@@ -24,7 +24,7 @@ export class AuthService {
 
   public signIn (credentials: SignInData): Observable<any> {
     return this.http
-      .post<Token>(`${this.url}/api/login`, credentials)
+      .post<Token>(`${this.url}/login`, credentials)
       .pipe(tap(({ token }) => {
         this.setToken(token)
         this.isLoggedIn$.next(true)
@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   public loadLoggedUser (): Observable<any> {
-    return this.http.get<any>(`${this.url}/api/me`)
+    return this.http.get<any>(`${this.url}/me`)
   }
 
   public getToken (): any {

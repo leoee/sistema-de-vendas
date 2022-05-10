@@ -20,7 +20,7 @@ export class UserService {
   }
 
   public addUser (user: any): Observable<any> {
-    return this.http.post<any>(`${this.url}/users/`, user)
+    return this.http.post<any>(`${this.url}/users`, user)
   }
 
   public updateUserById (userId: string, body: any): Observable<any> {
