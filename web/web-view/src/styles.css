@@ -1,1 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import '~ngx-toastr/toastr';
+
+
+:root {
+  --color-top-navbar: #282a36;
+  --color-top-tabs: white;
+  --color-back-dropdown: rgb(24, 145, 201);
+}
+
+#toast-container > div {
+  box-shadow: none;
+  font-size: 1.3rem;
+  border-radius: 1rem;
+}
+
+.toast-success {
+  background-color: rgb(71, 241, 37);
+}
+
+.toast-error {
+  background-color: rgb(250, 125, 125);
+  border: 0.1rem solid red;
+}
+
+.toast-title {
+  margin-top: 0.1rem;
+}
+
+.toast-message {
+  margin-top: 0.1rem;
+  margin-bottom: 0.2rem;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

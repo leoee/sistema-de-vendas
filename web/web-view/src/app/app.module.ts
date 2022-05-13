@@ -11,6 +11,12 @@ import { CoreModule } from './core/core.module'
 import { FooterComponent } from './shared/footer/footer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { HomePageComponent } from './layout/home-page/home-page.component';
+import { TopNavbarLoggedComponent } from './shared/top-navbar-logged/top-navbar-logged.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -19,6 +25,8 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     CreateUserComponent,
     TopNavbarComponent,
     FooterComponent,
+    HomePageComponent,
+    TopNavbarLoggedComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,8 +34,12 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     NgbModule,
     ReactiveFormsModule,
     FormsModule,
+    MatIconModule,
+    MatButtonModule,
     
-    CoreModule
+    CoreModule,
+    
+    BrowserAnimationsModule
   ],
   providers: [
     {

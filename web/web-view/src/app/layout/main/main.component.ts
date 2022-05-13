@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import {NgbCarouselConfig} from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -28,6 +29,7 @@ export class MainComponent implements OnInit, OnDestroy {
     private config: NgbCarouselConfig,
     private readonly formBuilder: FormBuilder,
     private readonly authService: AuthService,
+    private readonly router: Router,
     private readonly notificationService: NotificationService) {
     config.showNavigationArrows = true;
     config.showNavigationIndicators = true;
@@ -43,12 +45,17 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   public signIn (credentials: SignInData): void {
-    console.log(credentials);
+    if (!this.userData.valid) {
+      this.notificationService.error('Ops!', 'E-mail ou senha inválida.')
+      return;
+    }
+
     this.authService.signIn(credentials)
       .pipe(takeUntil(this.unsub$))
       .subscribe(
         () => {
           this.notificationService.success('Ei!', 'Login efetuado com sucesso!')
+          this.router.navigate(['/home-page'])
         },
         ({ error: httpError }: HttpErrorResponse) => {
           this.notificationService.error('Ops!', 'E-mail ou senha inválida.')

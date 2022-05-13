@@ -9,7 +9,7 @@
       <h5>Email</h5>
       <input type="text" class="form-control" id="inputEmail" formControlName="email" placeholder="Email *">
       <h5>Senha</h5>
-      <input type="password" class="form-control" id="inputPassword" formControlName="password" placeholder="Senha *">
+      <input type="password" class="form-control" id="inputPassword" formControlName="password" placeholder="Min 7 caracteres*">
       <h5>CPF</h5>
       <input type="number" class="form-control" id="inputCpf" formControlName="cpf" placeholder="CPF *">
       <h5>Telefone</h5>
@@ -27,6 +27,6 @@
     </div>
   </div>
   <div id="buttons" (click)="createUser(userData.value)">
-    <button id="btn" type="submit">Criar conta</button>
+    <button [ngClass]="{'invalid-form' : !userData.valid}" id="btn" type="submit">Criar conta</button>
   </div>
 </div>

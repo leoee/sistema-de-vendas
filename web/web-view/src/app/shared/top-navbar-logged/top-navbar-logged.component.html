@@ -1,0 +1,23 @@
+<div id="main">
+  <div id="top-navbar">
+    <h1>Sistema de Vendas</h1>
+    <h3 routerLink="/home">Home</h3>
+    <h2>|</h2>
+    <h3>Sobre</h3>
+  </div>
+  <div id="info_user" class="dropdown">
+    <div class="nav-link" id="dropdownMenuLink">
+      <a>{{ (user$ | async)?.name }}</a>
+      <mat-icon aria-hidden="false" aria-label="Example home icon">menu</mat-icon>
+    </div>
+
+      <div class="dropdown-menu">
+        <a class="dropdown-item" routerLink='ciac'>Editar conta</a>
+        <a class="dropdown-item" routerLink='camp-nacionais'>Carrinho</a>
+        <a class="dropdown-item" routerLink='canalta-nas-escolas'>Pedidos</a>
+        <a (click)="signOut()" class="dropdown-item" routerLink='canalta-nas-escolas'>Sair</a>
+      </div>
+  </div>
+</div>
+
+
