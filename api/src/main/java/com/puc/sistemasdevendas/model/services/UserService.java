@@ -83,7 +83,9 @@ public class UserService {
             throw new ForbidenException("Not authorized to update user: " + userId);
         }
 
-        requestPayload.setPassword(bCryptPasswordEncoder.encode(fetchedUser.get().getPassword()));
+        if (requestPayload.getPassword() != null) {
+            requestPayload.setPassword(bCryptPasswordEncoder.encode(requestPayload.getPassword()));
+        }
 
         Update update = new Update();
         Query query = new Query().addCriteria(where("_id").is(userId));
