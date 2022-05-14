@@ -13,6 +13,7 @@ import com.puc.sistemasdevendas.model.helpers.DecodeToken;
 import com.puc.sistemasdevendas.model.repositories.UserRepository;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -82,7 +83,7 @@ public class UserService {
             throw new ForbidenException("Not authorized to update user: " + userId);
         }
 
-        requestPayload.setPassword(bCryptPasswordEncoder.encode(requestPayload.getPassword()));
+        requestPayload.setPassword(bCryptPasswordEncoder.encode(fetchedUser.get().getPassword()));
 
         Update update = new Update();
         Query query = new Query().addCriteria(where("_id").is(userId));
@@ -91,7 +92,9 @@ public class UserService {
         dataMap.values().removeIf(Objects::isNull);
         dataMap.forEach(update::set);
 
-        return this.mongoTemplate.findAndModify(query, update, User.class);
+        FindAndModifyOptions findAndModifyOptions = FindAndModifyOptions.options().returnNew(true);
+
+        return this.mongoTemplate.findAndModify(query, update, findAndModifyOptions, User.class);
     }
 
     public User getCurrentUser(String token) {
