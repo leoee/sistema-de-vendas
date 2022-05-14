@@ -17,19 +17,32 @@
   
     </div>
   
-    <div id="offers">
+    <div id="offers" *ngIf="(items$ | async) as items; else loadingOrError">
       <h1>Comprar nunca foi tão fácil!!</h1>
-      <ngb-carousel *ngIf="images" [showNavigationArrows]="showNavigationArrows" [showNavigationIndicators]="showNavigationIndicators">
-        <ng-template ngbSlide *ngFor="let image of images">
-          <div class="picsum-img-wrapper">
-            <img [src]="image" alt="Random slide">
+      <ngb-carousel id="carousel">
+        <ng-template ngbSlide *ngFor="let item of items">
+          <div id="item">
+            <div class="picsum-img-wrapper">
+              <img [src]="item.imageUrl" alt="Random slide">
+            </div>
           </div>
-          <div class="carousel-caption">
-            <h3>No mouse navigation</h3>
-            <p>This carousel hides navigation arrows and indicators.</p>
+          <div id="info_item">
+            <h1>{{item?.name}}</h1>
+            <h3>R$: {{item?.price}}</h3>
+            <h3>{{item?.description}}</h3>
+            <h3>{{item?.specification}}</h3>
           </div>
         </ng-template>
       </ngb-carousel>
     </div>
   </div>
 </div>
+
+
+<ng-template #loadingOrError>
+  <app-error *ngIf="error$ | async; else loading"></app-error>
+
+  <ng-template #loading>
+    <app-loading></app-loading>
+  </ng-template>
+</ng-template>

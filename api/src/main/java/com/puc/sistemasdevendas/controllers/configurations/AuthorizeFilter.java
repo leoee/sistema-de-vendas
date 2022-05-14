@@ -27,10 +27,10 @@ public class AuthorizeFilter extends OncePerRequestFilter {
             return;
         }
 
-        String authorizationHeader = request.getHeader("Authorization");
 
         try {
             if (this.shouldValidateAuthorization(request)) {
+                String authorizationHeader = request.getHeader("Authorization");
                 String token = authorizationHeader.substring("Bearer".length()).trim();
 
                 Jwts.parserBuilder()

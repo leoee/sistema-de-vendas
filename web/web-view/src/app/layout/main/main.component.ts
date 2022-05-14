@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import {NgbCarouselConfig} from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
+import { Item } from 'src/app/data/dtos/item.model';
 import { SignInData } from 'src/app/data/dtos/signin-data.model';
+import { ItemService } from 'src/app/data/services/item.service';
 
 @Component({
   selector: 'app-main',
@@ -18,25 +20,30 @@ import { SignInData } from 'src/app/data/dtos/signin-data.model';
 })
 export class MainComponent implements OnInit, OnDestroy {
   public userData!: FormGroup
+  public items$!: Observable<any>
+  public images: Item[] = [];
 
   public showNavigationArrows = true;
   public showNavigationIndicators = false;
-  public images = [1055, 194, 368].map((n) => `https://picsum.photos/id/${n}/900/500`);
 
   private unsub$ = new Subject<void>();
 
   public constructor(
-    private config: NgbCarouselConfig,
+    public config: NgbCarouselConfig,
     private readonly formBuilder: FormBuilder,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly notificationService: NotificationService) {
-    config.showNavigationArrows = true;
-    config.showNavigationIndicators = true;
+    private readonly notificationService: NotificationService,
+    private readonly itemService: ItemService) {
+    config.showNavigationArrows = false;
+    config.showNavigationIndicators = false;
+    config.interval = 5000;
+    config.pauseOnHover = true;
   }
 
   public ngOnInit(): void {
     this.initializeForm();
+    this.loadItems();
   }
 
   public ngOnDestroy (): void {
@@ -70,4 +77,15 @@ export class MainComponent implements OnInit, OnDestroy {
     })
   }
 
+  private loadItems(): void {
+    let that = this;
+
+    this.items$ = this.itemService
+    .loadItems()
+    .pipe(map(items => items));
+    
+    this.items$.subscribe(function (item) {
+      that.images?.push(item);
+    })
+  }
 }

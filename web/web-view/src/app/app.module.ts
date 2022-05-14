@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { LoadingComponent } from './shared/loading/loading.component';
+import { ItemService } from './data/services/item.service';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { LoadingComponent } from './shared/loading/loading.component';
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy
-    }
+    },
+    ItemService
   ],
   bootstrap: [AppComponent]
 })
