@@ -27,6 +27,7 @@ export class AuthGuard implements CanActivate, OnDestroy {
       .pipe(takeUntil(this.unsub$))
       .subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn)
 
+
     if (!this.isLoggedIn) {
       this.router.navigate(['/home'])
       return false

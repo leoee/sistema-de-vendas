@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
 import { CreateUserComponent } from './layout/create-user/create-user.component';
 import { HomePageComponent } from './layout/home-page/home-page.component';
 import { MainComponent } from './layout/main/main.component';
+
 
 const routes: Routes = [
   {
@@ -18,7 +20,7 @@ const routes: Routes = [
   {
     path: 'home-page',
     component: HomePageComponent,
-    pathMatch: 'full'
+    canActivate: [AuthGuard]
   },
   {
     path: '**',
