@@ -12,12 +12,79 @@
     </div>
 
       <div class="dropdown-menu">
-        <a class="dropdown-item" routerLink='ciac'>Editar conta</a>
-        <a class="dropdown-item" routerLink='camp-nacionais'>Carrinho</a>
-        <a class="dropdown-item" routerLink='canalta-nas-escolas'>Pedidos</a>
-        <a (click)="signOut()" class="dropdown-item" routerLink='canalta-nas-escolas'>Sair</a>
+        <a class="dropdown-item" (click)="openEditUserModal(AddUser)">Editar conta</a>
+        <a class="dropdown-item">Carrinho</a>
+        <a class="dropdown-item">Pedidos</a>
+        <a (click)="signOut()" routerLink="/home" class="dropdown-item">Sair</a>
       </div>
   </div>
 </div>
 
 
+
+<ng-template #AddUser let-modal id="addUserModal">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edição de Perfil</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="(user$ | async) as user; else loadingOrError">
+    <form [formGroup]="form">
+      <div class="form-group">
+        <label for="name">Nome</label>
+        <div class="input-group">
+          <input class="form-control" type="text" [placeholder]="user?.name" formControlName="name">
+        </div>
+        <label for="email">E-mail</label>
+        <div class="input-group">
+          <input class="form-control" type="email" readonly [value]="user?.email">
+        </div>
+        <label for="cpf">CPF</label>
+        <div class="input-group">
+          <input class="form-control" type="text" readonly [value]="user?.cpf">
+        </div>
+        <label for="number">Num. Telefone</label>
+        <div class="input-group">
+          <input class="form-control" type="text" [placeholder]="user?.cellphoneNumber" formControlName="cellphoneNumber" [value]="user?.cellphoneNumber">
+        </div>
+        <div id="address" formGroupName="address">
+          <label for="address">Endereço</label>
+          <div class="input-group">
+            <input class="form-control" type="text" [placeholder]="user?.address?.place" formControlName="place" [value]="user?.address?.place">
+          </div>
+          <label for="address">Cidade</label>
+          <div class="input-group">
+            <input class="form-control" type="text" [placeholder]="user?.address?.city" formControlName="city" [value]="user?.address?.city">
+          </div>
+          <label for="address">CEP</label>
+          <div class="input-group">
+            <input class="form-control" type="text" [placeholder]="user?.address?.zip" formControlName="zip" [value]="user?.address?.zip">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Min 7 caracteres" type="password" formControlName="password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          *ngIf="user as user"
+          type="button" [disabled]="!form.valid"
+          (click)="updateUser(user, form.value)"
+          class="btn btn-outline-dark">Salvar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #loadingOrError>
+  <app-error *ngIf="error$ | async; else loading"></app-error>
+
+  <ng-template #loading>
+    <app-loading></app-loading>
+  </ng-template>
+</ng-template>
