@@ -14,7 +14,12 @@
       <div class="dropdown-menu">
         <a class="dropdown-item" (click)="openEditUserModal(AddUser)">Editar conta</a>
         <a class="dropdown-item">Carrinho</a>
-        <a class="dropdown-item">Pedidos</a>
+        <a class="dropdown-item">Meus pedidos</a>
+        <div *ngIf="(user$ | async)?.role == 'ADMIN'">
+          <a class="dropdown-item">Gerenciar usuários</a>
+          <a class="dropdown-item">Gerenciar Itens</a>
+          <a class="dropdown-item">Gerenciar Pedidos</a>
+        </div>
         <a (click)="signOut()" routerLink="/home" class="dropdown-item">Sair</a>
       </div>
   </div>

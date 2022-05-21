@@ -3,3 +3,14 @@ div {
   left:50%;
   top:50%;
 }
+span {
+  color: white;
+  background-color: white;
+}
+h4 {
+  color: white;
+}
+
+.spinner-border {
+  color: white;
+}

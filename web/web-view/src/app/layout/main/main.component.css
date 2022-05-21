@@ -97,3 +97,11 @@
 #info_item {
   color: white;
 }
+
+.spinner-border {
+  align-items: center;
+  left: 75%;
+  top: 50%;
+  color: white;
+  position: absolute;
+}
