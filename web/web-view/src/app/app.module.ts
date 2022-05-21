@@ -19,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { LoadingComponent } from './shared/loading/loading.component';
 import { ItemService } from './data/services/item.service';
+import { ItemsComponent } from './layout/items/items.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { ItemService } from './data/services/item.service';
     HomePageComponent,
     TopNavbarLoggedComponent,
     LoadingComponent,
+    ItemsComponent,
   ],
   imports: [
     BrowserModule,

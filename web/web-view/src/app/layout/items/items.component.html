@@ -1,0 +1,152 @@
+<div id="main">
+  <app-top-navbar-logged></app-top-navbar-logged>
+
+  <div id="body">
+    <div id="top_buttons">
+      <button id="add_button" (click)="openEditUserModal(AddItem)" mat-raised-button>Adicionar item</button>
+      <div class="input-group">
+        <mat-icon style="margin-right: 2%;" (click)="filterItemsByName()">search</mat-icon>
+        <input class="form-control" placeholder="Nome" type="text" [(ngModel)]="itemName">
+      </div>
+    </div>
+    <div id="list-items" *ngIf="(items$ | async) as items; else loadingOrError">
+      <div *ngFor="let item of items">
+        <a class="list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">{{item.name}}</h5>
+            <small style="font-size: larger; font-weight: bolder;">R$: {{item.price}}</small>
+            <small style="font-size: larger; font-weight: bolder;">Estoque: {{item.stockQuantity}}</small>
+            <div style="display: flex; ">
+              <!-- <mat-icon (click)="openEditItemModal(EditItem, item)">edit</mat-icon> -->
+              <mat-icon (click)="openEditItemModal(ViewItem, item)">visibility</mat-icon>
+              <mat-icon (click)="openDeleteItemModal(DeleteItem, item)">delete</mat-icon>
+            </div>
+          </div>
+          <p class="mb-1">{{item.description}}</p>
+          <small>{{item.specification}}</small>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #AddItem let-modal id="addItemTemplate">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Adicionar Item</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form" (ngSubmit)="createItem(form.value)">
+      <div class="form-group">
+        <label for="name">Nome</label>
+        <div class="input-group">
+          <input class="form-control" type="text" formControlName="name">
+        </div>
+        <label for="email">Descrição</label>
+        <div class="input-group">
+          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" formControlName="description" rows="5"></textarea>
+        </div>
+        <label for="cpf">Especificação</label>
+        <div class="input-group">
+          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" formControlName="specification" rows="5"></textarea>
+        </div>
+        <label for="number">Preço</label>
+        <div class="input-group">
+          <input class="form-control" type="number" formControlName="price">
+        </div>
+        <label for="number">Quantidade em estoque</label>
+        <div class="input-group">
+          <input class="form-control" type="number" formControlName="stockQuantity">
+        </div>
+        <label for="number">Link da imagem</label>
+        <div class="input-group">
+          <input class="form-control" type="text" formControlName="imageUrl">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="submit" [disabled]="!form.valid"
+          class="btn btn-outline-dark">Criar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #ViewItem let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar Item</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form" (ngSubmit)="createItem(form.value)">
+      <div class="form-group">
+        <label for="name">Nome</label>
+        <div class="input-group">
+          <input class="form-control" [placeholder]="currentItemToEdit?.name" readonly type="text" formControlName="name">
+        </div>
+        <label for="email">Descrição</label>
+        <div class="input-group">
+          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" readonly [placeholder]="currentItemToEdit?.description" formControlName="description" rows="5"></textarea>
+        </div>
+        <label for="cpf">Especificação</label>
+        <div class="input-group">
+          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" readonly [placeholder]="currentItemToEdit?.specification" formControlName="specification" rows="5"></textarea>
+        </div>
+        <label for="number">Preço</label>
+        <div class="input-group">
+          <input class="form-control" type="number" [placeholder]="currentItemToEdit?.price" readonly formControlName="price">
+        </div>
+        <label for="number">Quantidade em estoque</label>
+        <div class="input-group">
+          <input class="form-control" type="number" [placeholder]="currentItemToEdit?.stockQuantity" readonly formControlName="stockQuantity">
+        </div>
+        <label for="number">Link da imagem</label>
+        <div class="input-group">
+          <input class="form-control" type="text" [placeholder]="currentItemToEdit?.imageUrl" readonly formControlName="imageUrl">
+        </div>
+        <label for="number">Imagem</label>
+        <img style="margin-top: 1%;" [src]="currentItemToEdit?.imageUrl" alt="Random slide">
+      </div>
+
+      <!-- <div class="modal-footer">
+        <button
+          type="submit"
+          class="btn btn-outline-dark">Salvar</button>
+      </div> -->
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #DeleteItem let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Confirmar ação</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form (ngSubmit)="modal.close()">
+    <div class="modal-body">
+      <p>{{'Tem certeza que deseja deletar ' + currentItemToDelete.name + '?'}}</p>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-danger">Deletar</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #loadingOrError>
+  <app-error *ngIf="error$ | async; else loading"></app-error>
+
+  <ng-template #loading>
+    <div class="spinner-border" role="status">
+      <span class="sr-only"></span>
+    </div>
+  </ng-template>
+</ng-template>

@@ -1,0 +1,37 @@
+#list-items a {
+  margin-top: 2%;
+}
+
+#body {
+  align-items: center;
+  justify-content: center;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 5%;
+}
+
+.textarea {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  resize: both;
+  min-height: 40px;
+  line-height: 20px;
+}
+
+.mat-icon:hover {
+  cursor: pointer;
+}
+
+#add_button:hover {
+  background-color: rgb(241, 238, 232);
+}
+
+#top_buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+#top_buttons .input-group {
+  width: 15%;
+}

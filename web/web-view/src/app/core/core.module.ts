@@ -11,6 +11,7 @@ import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { throwIfAlreadyLoaded } from './guards/module-import.guard';
 import { ToastrModule } from 'ngx-toastr';
 import { UserService } from '../data/services/user.service';
+import { AuthRoleGuard } from './guards/authRole.guard';
 
 @NgModule({
   declarations: [],
@@ -34,6 +35,7 @@ import { UserService } from '../data/services/user.service';
     NotificationService,
 
     AuthGuard,
+    AuthRoleGuard,
 
     {
       provide: HTTP_INTERCEPTORS,
