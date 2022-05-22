@@ -40,7 +40,7 @@ export class CreateUserComponent implements OnInit, OnDestroy {
       cellphoneNumber: ['', [Validators.required]],
       address: this.formBuilder.group({
         place: ['', [Validators.required]],
-        zipCode: ['', [Validators.required]],
+        zip: ['', [Validators.required]],
         city: ['', [Validators.required]],
       })
 
