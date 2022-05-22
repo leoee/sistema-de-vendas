@@ -1,4 +1,7 @@
-# Sistema de Vendas [![<ORG_NAME>](https://circleci.com/gh/leoee/sistema-de-vendas.svg?style=svg)](https://app.circleci.com/pipelines/github/leoee/sistema-de-vendas?filter=all)
+# Sistema de Vendas [![<ORG_NAME>](https://circleci.com/gh/leoee/sistema-de-vendas.svg?style=svg)](https://app.circleci.com/pipelines/github/leoee/sistema-de-vendas?filter=all) [![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)](https://sistema-de-vendas-api.herokuapp.com/api/swagger-ui.html)
+![Uptime](https://badgen.net/uptime-robot/status/ur1333516-c62b12efa6a31608d212fd23)
+![UptimeDay](https://badgen.net/uptime-robot/day/ur1333516-c62b12efa6a31608d212fd23)
+
 Este é um projeto de sistema de vendas do curso de Pós Graduação da Puc Minas
 
 
