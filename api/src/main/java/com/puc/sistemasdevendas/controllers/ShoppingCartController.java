@@ -1,5 +1,6 @@
 package com.puc.sistemasdevendas.controllers;
 
+import com.puc.sistemasdevendas.model.entities.CheckoutShoppingCartRequest;
 import com.puc.sistemasdevendas.model.entities.PatchShoppingCartItem;
 import com.puc.sistemasdevendas.model.entities.ShoppingCart;
 import com.puc.sistemasdevendas.model.entities.ShoppingCartItemRequest;
@@ -7,9 +8,7 @@ import com.puc.sistemasdevendas.model.services.ShoppingCartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Example;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -79,5 +78,13 @@ public class ShoppingCartController {
                                                          required = false)
                                                          Optional<Boolean> expand) {
         return ResponseEntity.ok(this.shoppingCartService.getShoppingCart(bearerToken.substring(6), expand.orElse(false)));
+    }
+
+    @ApiOperation(value = "Finalizar carrinho de compras")
+    @RequestMapping(value = "/shoppingCart/checkout", method = RequestMethod.POST)
+    ResponseEntity<?> shoppingCartCheckout(@RequestHeader("Authorization") final String bearerToken,
+                                         @RequestBody @Valid CheckoutShoppingCartRequest checkoutPayload) {
+        this.shoppingCartService.checkoutShoppingCart(bearerToken.substring(6), checkoutPayload);
+        return ResponseEntity.noContent().build();
     }
 }

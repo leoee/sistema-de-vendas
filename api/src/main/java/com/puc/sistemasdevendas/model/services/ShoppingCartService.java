@@ -3,6 +3,7 @@ package com.puc.sistemasdevendas.model.services;
 import com.puc.sistemasdevendas.model.entities.*;
 import com.puc.sistemasdevendas.model.exceptions.BadRequestException;
 import com.puc.sistemasdevendas.model.exceptions.ForbidenException;
+import com.puc.sistemasdevendas.model.exceptions.NotAcceptableException;
 import com.puc.sistemasdevendas.model.exceptions.NotFoundException;
 import com.puc.sistemasdevendas.model.helpers.DecodeToken;
 import com.puc.sistemasdevendas.model.repositories.ItemRepository;
@@ -28,6 +29,8 @@ public class ShoppingCartService {
     private ItemRepository itemRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderService orderService;
     @Autowired
     private DecodeToken decodeToken;
     private final Logger logger = Logger.getLogger(ShoppingCartService.class);
@@ -169,26 +172,52 @@ public class ShoppingCartService {
     }
 
     public ShoppingCart updateItemAmount(String token, String itemId, PatchShoppingCartItem shoppingCartItemPayload) {
-        AtomicReference<Boolean> shoppingCartContainsItem = new AtomicReference<>(false);
         User fetchedUser = this.getUserFromToken(token);
         ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
+        Item fetchedItem = this.itemRepository.findById(itemId).orElse(null);
 
-        if (fetchedSc != null && fetchedSc.getShoppingCartItemList() != null) {
-            fetchedSc.getShoppingCartItemList().forEach(shoppingCartItem -> {
-                if (shoppingCartItem.getItemId().equals(itemId)) {
-                    shoppingCartContainsItem.set(true);
-                    shoppingCartItem.setAmount(shoppingCartItemPayload.getAmount());
-                }
-            });
-        }
-
-        if (!shoppingCartContainsItem.get()) {
+        if (fetchedItem == null) {
             this.logger.info("Could not found item to update quantity on shopping cart: itemId: "
                     + itemId + ", user: " + fetchedUser.getEmail());
             throw new NotFoundException("Could not find item on shopping cart to update");
         }
 
+        if (fetchedSc != null) {
+            fetchedSc.getShoppingCartItemList().forEach(shoppingCartItem -> {
+                if (shoppingCartItem.getItemId().equals(itemId)) {
+                    shoppingCartItem.setAmount(shoppingCartItemPayload.getAmount());
+                }
+            });
+            fetchedSc.setTotal(fetchedItem.getPrice() * shoppingCartItemPayload.getAmount());
+        }
+
         return this.shoppingCartRepository.save(fetchedSc);
+    }
+
+    public void checkoutShoppingCart(String token, CheckoutShoppingCartRequest checkoutShoppingCartRequest) {
+        User fetchedUser = this.getUserFromToken(token);
+        ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
+
+        if (fetchedSc != null) {
+            if (fetchedSc.getShoppingCartItemList().size() == 0) {
+                throw new BadRequestException("Could not checkout shopping cart due empty items");
+            }
+
+            fetchedSc.getShoppingCartItemList().forEach(this::validateItemQuantity);
+
+            this.orderService.createOrder(fetchedUser, fetchedSc, checkoutShoppingCartRequest);
+            fetchedSc.setShoppingCartItemList(new ArrayList<>());
+            fetchedSc.setTotal((double) 0);
+            this.shoppingCartRepository.save(fetchedSc);
+        }
+    }
+
+    private void validateItemQuantity(ShoppingCartItem shoppingCartItem) {
+        Item fetchedItem = this.itemRepository.findById(shoppingCartItem.getItemId()).orElse(null);
+
+        if (fetchedItem != null && fetchedItem.getStockQuantity() < shoppingCartItem.getAmount()) {
+            throw new NotAcceptableException("Item: " + shoppingCartItem.getItemId() + " does not contain quantity in stock.");
+        }
     }
 
 }

@@ -42,4 +42,10 @@ public class ApiExceptionHandler {
         GlobalError globalError = new GlobalError(HttpStatus.NOT_FOUND.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(globalError);
     }
+
+    @ExceptionHandler(NotAcceptableException.class)
+    public ResponseEntity<GlobalError> notAcceptable(NotAcceptableException e) {
+        GlobalError globalError = new GlobalError(HttpStatus.NOT_ACCEPTABLE.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(globalError);
+    }
 }
