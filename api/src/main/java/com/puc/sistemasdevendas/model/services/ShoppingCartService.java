@@ -1,9 +1,6 @@
 package com.puc.sistemasdevendas.model.services;
 
-import com.puc.sistemasdevendas.model.entities.Item;
-import com.puc.sistemasdevendas.model.entities.ShoppingCart;
-import com.puc.sistemasdevendas.model.entities.ShoppingCartItem;
-import com.puc.sistemasdevendas.model.entities.User;
+import com.puc.sistemasdevendas.model.entities.*;
 import com.puc.sistemasdevendas.model.exceptions.BadRequestException;
 import com.puc.sistemasdevendas.model.exceptions.ForbidenException;
 import com.puc.sistemasdevendas.model.exceptions.NotFoundException;
@@ -20,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -168,6 +166,29 @@ public class ShoppingCartService {
         }
 
         return fetchedUser;
+    }
+
+    public ShoppingCart updateItemAmount(String token, String itemId, PatchShoppingCartItem shoppingCartItemPayload) {
+        AtomicReference<Boolean> shoppingCartContainsItem = new AtomicReference<>(false);
+        User fetchedUser = this.getUserFromToken(token);
+        ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
+
+        if (fetchedSc != null && fetchedSc.getShoppingCartItemList() != null) {
+            fetchedSc.getShoppingCartItemList().forEach(shoppingCartItem -> {
+                if (shoppingCartItem.getItemId().equals(itemId)) {
+                    shoppingCartContainsItem.set(true);
+                    shoppingCartItem.setAmount(shoppingCartItemPayload.getAmount());
+                }
+            });
+        }
+
+        if (!shoppingCartContainsItem.get()) {
+            this.logger.info("Could not found item to update quantity on shopping cart: itemId: "
+                    + itemId + ", user: " + fetchedUser.getEmail());
+            throw new NotFoundException("Could not find item on shopping cart to update");
+        }
+
+        return this.shoppingCartRepository.save(fetchedSc);
     }
 
 }

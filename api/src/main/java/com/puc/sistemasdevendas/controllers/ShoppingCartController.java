@@ -1,5 +1,6 @@
 package com.puc.sistemasdevendas.controllers;
 
+import com.puc.sistemasdevendas.model.entities.PatchShoppingCartItem;
 import com.puc.sistemasdevendas.model.entities.ShoppingCart;
 import com.puc.sistemasdevendas.model.entities.ShoppingCartItemRequest;
 import com.puc.sistemasdevendas.model.services.ShoppingCartService;
@@ -38,7 +39,7 @@ public class ShoppingCartController {
         return new ResponseEntity<>(this.shoppingCartService.addItem(
                 bearerToken.substring(6),
                 shoppingCartItem.getItemId(),
-                shoppingCartItem.getQuantity()), HttpStatus.CREATED);
+                shoppingCartItem.getAmount()), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Remover um item do carrinho de compras")
@@ -52,6 +53,19 @@ public class ShoppingCartController {
                                          String itemId) {
         this.shoppingCartService.deleteItemIntoSc(bearerToken.substring(6), itemId);
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "Editar a quantidade de um item do carrinho de compras")
+    @RequestMapping(value = "/shoppingCart/items/{itemId}", method = RequestMethod.PATCH)
+    ResponseEntity<?> updateItemQuantity(@RequestHeader("Authorization") final String bearerToken,
+                                 @PathVariable("itemId")
+                                 @ApiParam(name = "itemId",
+                                         value = "Id do item a ser editado no carrinho de compras",
+                                         example = "111233",
+                                         required = true)
+                                         String itemId,
+                                         @RequestBody @Valid PatchShoppingCartItem shoppingCartItem) {
+        return ResponseEntity.ok(this.shoppingCartService.updateItemAmount(bearerToken.substring(6), itemId, shoppingCartItem));
     }
 
     @ApiOperation(value = "Buscar um carrinho de compras")

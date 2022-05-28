@@ -10,5 +10,5 @@ public class ShoppingCartItemRequest {
     @NotNull
     private String itemId;
     @Min(1)
-    private Integer quantity;
+    private Integer amount;
 }
