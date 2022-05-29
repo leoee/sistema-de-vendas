@@ -19,3 +19,7 @@ Este é um projeto de sistema de vendas do curso de Pós Graduação da Puc Mina
 # Apresentação Figma
 
 [Link para apresentação](https://www.figma.com/proto/cqb9ekurSRedltHNyb3XAq/P%C3%B3s-UI?node-id=703%3A25112&scaling=min-zoom&page-id=256%3A0&starting-point-node-id=703%3A25112)
+
+# Diagrama C4
+![alt text](https://github.com/leoee/sistema-de-vendas/blob/main/images/c4_part1.png)<br>
+![alt text](https://github.com/leoee/sistema-de-vendas/blob/main/images/c4_part2.png)<br>
