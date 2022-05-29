@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.puc.sistemasdevendas.controllers.configurations.AuthorizeFilter;
 import com.puc.sistemasdevendas.model.entities.User;
 import com.puc.sistemasdevendas.model.entities.UserPatch;
 import com.puc.sistemasdevendas.model.exceptions.DuplicateEntity;
@@ -41,7 +40,7 @@ public class UserService {
     private ShoppingCartService shoppingCartService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final Logger logger = Logger.getLogger(AuthorizeFilter.class);
+    private final Logger logger = Logger.getLogger(UserService.class);
     private final ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
