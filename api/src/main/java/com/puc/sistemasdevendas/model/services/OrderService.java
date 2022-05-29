@@ -1,14 +1,25 @@
 package com.puc.sistemasdevendas.model.services;
 
 import com.puc.sistemasdevendas.model.entities.*;
+import com.puc.sistemasdevendas.model.exceptions.BadRequestException;
+import com.puc.sistemasdevendas.model.exceptions.ForbidenException;
+import com.puc.sistemasdevendas.model.exceptions.NotFoundException;
+import com.puc.sistemasdevendas.model.helpers.DecodeToken;
 import com.puc.sistemasdevendas.model.repositories.ItemRepository;
 import com.puc.sistemasdevendas.model.repositories.OrderRepository;
+import com.puc.sistemasdevendas.model.repositories.UserRepository;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.puc.sistemasdevendas.model.constants.ApiConstans.ADM_ROLE;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 public class OrderService {
@@ -16,12 +27,20 @@ public class OrderService {
     private OrderRepository orderRepository;
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private DecodeToken decodeToken;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    private final Logger logger = Logger.getLogger(ShoppingCartService.class);
 
     public void createOrder(User owner, ShoppingCart shoppingCart,
                             CheckoutShoppingCartRequest checkoutShoppingCartRequest) {
         Order createdOrder = this.createBasicOrder(owner, shoppingCart, checkoutShoppingCartRequest);
 
-        this.updateOrderStatus(createdOrder, OrderStatus.WAITING_PAYMENT.toString(), "internal");
+        this.updateOrderStatus(createdOrder, createdOrder.getOrderStatus().toString(),
+                OrderStatus.WAITING_PAYMENT.toString(), "internal");
 
         orderRepository.insert(createdOrder);
     }
@@ -88,9 +107,102 @@ public class OrderService {
         return changeLogs;
     }
 
-    private void updateOrderStatus(Order order, String nextStatus, String origin) {
-        order.setChangeLogs(this.updateChangeLog(order.getChangeLogs(),
-                OrderStatus.OPEN.toString(), nextStatus, origin));
+    private void updateOrderStatus(Order order, String previousStatus, String nextStatus, String origin) {
+        if (nextStatus.equals(previousStatus)) {
+            throw new BadRequestException("Current order status is already the mentioned status.");
+        }
+
+        order.setChangeLogs(this.updateChangeLog(order.getChangeLogs(), previousStatus, nextStatus, origin));
         order.setOrderStatus(OrderStatus.valueOf(nextStatus));
+    }
+
+    public void confirmPayment(String token, String orderId) {
+        User fetchedUser = this.getUserFromToken(token);
+
+        if (!ADM_ROLE.equals(fetchedUser.getRole())) {
+            this.logger.warn("An attempt to update payment was made using user " + fetchedUser.getEmail());
+            throw new ForbidenException("Could not update payment due invalid permissions");
+        }
+
+        Order fetchedOrder = this.orderRepository.findById(orderId).orElse(null);
+
+        if (fetchedOrder == null) {
+            throw new NotFoundException("Could not found orderId: " + orderId);
+        }
+
+        this.updateOrderStatus(fetchedOrder, fetchedOrder.getOrderStatus().toString(),
+                OrderStatus.PAYMENT_CONFIRMED.toString(), "external");
+
+        fetchedOrder.getInvoice().setPaymentStatus(PaymentStatus.PAYMENT_CAPTURED);
+        this.orderRepository.save(fetchedOrder);
+
+    }
+
+    private User getUserFromToken(String token) {
+        String emailFromToken = this.decodeToken.getGetFromToken(token);
+
+        User fetchedUser = this.userRepository.findUserByEmail(emailFromToken).orElse(null);
+        if (fetchedUser == null) {
+            this.logger.error("Could not get user by email from token: " + emailFromToken);
+            throw new ForbidenException("Could not get user from token");
+        }
+
+        return fetchedUser;
+    }
+
+    public List<Order> getOrders(String token, String id, String ownerId, String orderStatus, String paymentStatus) {
+        User fetchedUser = this.getUserFromToken(token);
+        Query query = new Query();
+
+        if (!ADM_ROLE.equals(fetchedUser.getRole())) {
+            this.logger.warn("An attempt to update payment was made using user " + fetchedUser.getEmail());
+            throw new ForbidenException("Could not update payment due invalid permissions");
+        }
+
+        if (id != null) {
+            query.addCriteria(where("id").is(id));
+        }
+
+        if (ownerId != null) {
+            query.addCriteria(where("ownerId").is(ownerId));
+        }
+
+        if (orderStatus != null) {
+            query.addCriteria(where("orderStatus").is(orderStatus));
+        }
+
+        if (paymentStatus != null) {
+            query.addCriteria(where("invoice.paymentStatus").is(paymentStatus));
+        }
+
+        return this.mongoTemplate.find(query, Order.class);
+    }
+
+    public List<Order> getAllMineOrders(String token) {
+        User fetchedUser = this.getUserFromToken(token);
+        Query query = new Query();
+        query.addCriteria(where("ownerId").is(fetchedUser.getId()));
+        return this.mongoTemplate.find(query, Order.class);
+    }
+
+    public void updateOrderStatus(String token, String orderId, PatchOrderRequest patchOrderRequest) {
+        User fetchedUser = this.getUserFromToken(token);
+
+        if (!ADM_ROLE.equals(fetchedUser.getRole())) {
+            this.logger.warn("An attempt to update payment was made using user " + fetchedUser.getEmail());
+            throw new ForbidenException("Could not update payment due invalid permissions");
+        }
+
+        Order fetchedOrder = this.orderRepository.findById(orderId).orElse(null);
+
+        if (fetchedOrder == null) {
+            throw new NotFoundException("Could not found orderId: " + orderId);
+        }
+
+        this.updateOrderStatus(fetchedOrder, fetchedOrder.getOrderStatus().toString(),
+                patchOrderRequest.getOrderStatus().toString(), "external");
+
+        this.orderRepository.save(fetchedOrder);
+
     }
 }
