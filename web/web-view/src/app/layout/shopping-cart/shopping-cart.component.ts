@@ -27,6 +27,7 @@ export class ShoppingCartComponent implements OnInit {
   public maxPrice: string;
   public stockQuantity: string;
   public form!: FormGroup
+  public checkoutForm!: FormGroup
 
   public shoppingCartItems: Item[] = [];
 
@@ -47,7 +48,11 @@ export class ShoppingCartComponent implements OnInit {
   private initializeForms (): void {
     this.form = this.formBuilder.group({
       amount: ['', [Validators.required]]
-    })
+    });
+    this.checkoutForm = this.formBuilder.group({
+      notesForDelivery: [''],
+      paymentMethod: ['', [Validators.required]]
+    });
   }
 
   public ngOnDestroy (): void {
@@ -99,6 +104,15 @@ export class ShoppingCartComponent implements OnInit {
       )
   }
 
+  public openCheckoutShoppingCart (content: any): void {
+    this.modal.open(content, { centered: true })
+      .result.then(
+        () => {
+        },
+        () => this.modal.dismissAll()
+      )
+  }
+
   public updateItemAmont(item: any): void {
     this.shoppingCartService.updateShoppingCartItem(this.currentItemToEdit.itemId, item)
     .pipe(takeUntil(this.unsub$))
@@ -130,6 +144,24 @@ export class ShoppingCartComponent implements OnInit {
           this.notificationService.error('Ops!', 'Você não pode executar essa ação.')
         } else {
           this.notificationService.error('Ops!', 'Algo deu errado. Tente novamente.')
+        }
+      }
+    )
+  }
+
+  public checkoutShoppingCart(requestPayload: any): void {
+    this.shoppingCartService.checkoutShoppingCart(requestPayload)
+    .pipe(takeUntil(this.unsub$))
+    .subscribe(
+      () => {
+        this.notificationService.success('Que legal!', 'Seu carrinho foi finalizado com sucesso. Agora basta ficar de olho no seus pedidos!!')
+        this.loadShoppingCart()
+      },
+      (error: HttpErrorResponse) => {
+        if (error.status == 403) {
+          this.notificationService.error('Ops!', 'Você não pode executar essa ação.')
+        } else {
+          this.notificationService.error('Ops!', 'Selecione um método de pagamento e certifique que seu carrinho não está vazio.')
         }
       }
     )

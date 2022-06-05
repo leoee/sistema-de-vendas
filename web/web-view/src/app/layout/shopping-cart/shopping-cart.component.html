@@ -3,14 +3,17 @@
 
   <div id="body">
     <div id="total">
+      <button [disabled]="(shoppingCart$ | async)?.shoppingCartItemList.length == 0" id="look_button" (click)="openCheckoutShoppingCart(CheckoutShoppingCart)" mat-raised-button>Finalizar compra</button>
       <div id="total-field">
         <mat-icon>shopping_cart</mat-icon>
-        <h1>Total ({{ (shoppingCart$ | async)?.shoppingCartItemList.length}} item) R$:</h1>
-        <h2>{{ (shoppingCart$ | async)?.total }}</h2>
+        <h2>Total ({{ (shoppingCart$ | async)?.shoppingCartItemList.length}} item) R$:</h2>
+        <h1>{{ (shoppingCart$ | async)?.total }}</h1>
       </div>
-
     </div>
     <div id="list-items" *ngIf="(shoppingCart$ | async) as shoppingCart; else loadingOrError">
+      <div id="empty-sc" *ngIf="(shoppingCart$ | async)?.shoppingCartItemList.length == 0">
+        <h3>Seu carrinho está vazio.</h3>
+      </div>
       <div *ngFor="let item of shoppingCart.shoppingCartItemList">
         <a class="list-group-item list-group-item-action flex-column align-items-start">
           <div id="top-icons-sc">
@@ -92,6 +95,39 @@
     </div>
     <div class="modal-footer">
       <button type="submit" (click)="updateItemAmont(form.value)" class="btn btn-danger">Atualizar</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+    </div>
+  </form>
+</ng-template>
+
+
+<ng-template #CheckoutShoppingCart let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Finalização de compra</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="checkoutForm" (ngSubmit)="modal.close()" style="margin-left: 2%; margin-right: 2%">
+    <div id="info-checkout">
+      <h1>Total ({{ (shoppingCart$ | async)?.shoppingCartItemList.length}} item) R$:</h1>
+      <h1>{{ (shoppingCart$ | async)?.total }}</h1>
+    </div>
+    <div *ngIf="(shoppingCart$ | async) as shoppingCart; else loadingOrError">
+      <div *ngFor="let item of shoppingCart.shoppingCartItemList">
+        <h4>- {{item.name}}</h4>
+      </div>
+    </div>
+    <label for="cpf">Notas para entrega</label>
+    <div class="input-group">
+      <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" placeholder="Observações para entrega" formControlName="notesForDelivery" rows="2"></textarea>
+    </div>
+    <label for="cpf">Método da pagamento</label>
+    <select class="form-select" aria-label="Default select example" formControlName="paymentMethod">
+      <option value="PIX_ONLINE" selected>PIX ONLINE</option>
+    </select>
+    <div class="modal-footer">
+      <button type="submit" (click)="checkoutShoppingCart(checkoutForm.value)" class="btn btn-danger">Finalizar compra</button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
     </div>
   </form>

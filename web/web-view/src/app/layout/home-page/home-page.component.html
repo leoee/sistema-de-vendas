@@ -74,9 +74,10 @@
           <small>Qnt. adicionada</small>
           <input class="form-control" type="number" value="1" placeholder="Quantidade" formControlName="stockQuantityAdded">
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" type="submit">
+          <mat-icon (click)="addItemOnShoppingCart(form.value)">add_shopping_cart</mat-icon>
           <button
-            type="submit" [disabled]="currentItemToAnalyze?.stockQuantity == 0"
+            [disabled]="currentItemToAnalyze?.stockQuantity == 0"
             class="btn btn-outline-dark">Adicionar ao carrinho</button>
         </div>
       </div>

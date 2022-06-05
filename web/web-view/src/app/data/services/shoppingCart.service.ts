@@ -27,4 +27,8 @@ export class ShoppingCartService {
   public updateShoppingCartItem (itemId: any, patchPayload: any): Observable<any[]> {
     return this.http.patch<any[]>(`${this.url}/shoppingCart/items/${itemId}`, patchPayload)
   }
+
+  public checkoutShoppingCart (requestPayload: ShoppingCartAddItem): Observable<any[]> {
+    return this.http.post<any[]>(`${this.url}/shoppingCart/checkout`, requestPayload);
+  }
 }

@@ -65,3 +65,20 @@
   display: flex;
   justify-content: space-between;
 }
+
+#info-checkout {
+  display: flex;
+  margin-left: 1%;
+}
+
+#empty-sc {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  margin-top: 5%;
+}
+
+#empty-sc h3 {
+  font-weight: bolder;
+}
