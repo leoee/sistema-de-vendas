@@ -86,4 +86,19 @@ public class ItemController {
             throw e;
         }
     }
+
+    @ApiOperation(value = "Buscar um item")
+    @RequestMapping(value = "/items/{itemId}", method = RequestMethod.GET)
+    ResponseEntity<Item> getItem(@PathVariable
+                                 @ApiParam(name = "itemId",
+                                            value = "Valor do id do item a ser pesquisado",
+                                            example = "112223331",
+                                            required = true)
+                                            String itemId) {
+        try {
+            return ResponseEntity.ok(this.itemService.getItem(itemId));
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 }

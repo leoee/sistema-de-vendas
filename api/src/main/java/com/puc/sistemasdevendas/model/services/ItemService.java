@@ -37,6 +37,20 @@ public class ItemService {
         }
     }
 
+    public Item getItem(String itemId) {
+        try {
+            if (!this.itemRepository.existsById(itemId)) {
+                throw new NotFoundException("Could not find item with id: " + itemId);
+            }
+
+            return this.itemRepository.findById(itemId).get();
+        } catch(Exception e) {
+            this.logger.error("Failed to delete item: " + itemId + " | " + e.getMessage());
+            throw e;
+        }
+
+    }
+
     public void deleteItem(String token, String itemId) {
         try {
             this.authorizeOperation(token, "delete");

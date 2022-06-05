@@ -13,11 +13,8 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -34,6 +31,7 @@ public class ShoppingCartService {
     @Autowired
     private DecodeToken decodeToken;
     private final Logger logger = Logger.getLogger(ShoppingCartService.class);
+    DecimalFormat UK_DF = (DecimalFormat)DecimalFormat.getNumberInstance(Locale.ENGLISH);
 
     public void createShoppingCart(User owner) {
         ShoppingCart shoppingCart = new ShoppingCart();
@@ -66,7 +64,7 @@ public class ShoppingCartService {
             }));
 
             fetchedSc.setShoppingCartItemList(this.updateShoppingCartList(fetchedSc, fetchedItem, quantity));
-            fetchedSc.setTotal(fetchedSc.getTotal() + fetchedItem.getPrice() * quantity);
+            fetchedSc.setTotal(Double.valueOf(UK_DF.format(fetchedSc.getTotal() + fetchedItem.getPrice() * quantity)));
 
             return this.shoppingCartRepository.save(fetchedSc);
         } catch (Exception e) {
@@ -136,7 +134,13 @@ public class ShoppingCartService {
             throw new NotFoundException("Not found item inside shopping cart: " + itemId);
         }
 
-        fetchedSc.setTotal(fetchedSc.getTotal() - (itemsInsideShoppingCart.get(itemId) * fetchedItem.getPrice()));
+        if (fetchedSc.getShoppingCartItemList().size() != 0) {
+            fetchedSc.setTotal(Double.valueOf(UK_DF.format(
+                    fetchedSc.getTotal() - (itemsInsideShoppingCart.get(itemId) * fetchedItem.getPrice()))));
+        } else {
+            fetchedSc.setTotal((double) 0);
+        }
+
 
         this.shoppingCartRepository.save(fetchedSc);
     }
@@ -175,20 +179,25 @@ public class ShoppingCartService {
         User fetchedUser = this.getUserFromToken(token);
         ShoppingCart fetchedSc = this.shoppingCartRepository.findCartByOwner(fetchedUser.getId()).orElse(null);
         Item fetchedItem = this.itemRepository.findById(itemId).orElse(null);
+        AtomicReference<Double> oldPrice = new AtomicReference<>(0.0);
 
         if (fetchedItem == null) {
             this.logger.info("Could not found item to update quantity on shopping cart: itemId: "
                     + itemId + ", user: " + fetchedUser.getEmail());
             throw new NotFoundException("Could not find item on shopping cart to update");
+        } else if (shoppingCartItemPayload.getAmount() > fetchedItem.getStockQuantity()) {
+            throw new BadRequestException("There is no stock quantity for this amount");
         }
 
         if (fetchedSc != null) {
             fetchedSc.getShoppingCartItemList().forEach(shoppingCartItem -> {
                 if (shoppingCartItem.getItemId().equals(itemId)) {
+                    oldPrice.set(shoppingCartItem.getAmount() * fetchedItem.getPrice());
                     shoppingCartItem.setAmount(shoppingCartItemPayload.getAmount());
                 }
             });
-            fetchedSc.setTotal(fetchedItem.getPrice() * shoppingCartItemPayload.getAmount());
+            fetchedSc.setTotal(Double.valueOf(UK_DF.format(fetchedSc.getTotal() - oldPrice.get()
+                    + shoppingCartItemPayload.getAmount() * fetchedItem.getPrice())));
         }
 
         return this.shoppingCartRepository.save(fetchedSc);
