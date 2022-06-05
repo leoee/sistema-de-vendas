@@ -20,6 +20,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { LoadingComponent } from './shared/loading/loading.component';
 import { ItemService } from './data/services/item.service';
 import { ItemsComponent } from './layout/items/items.component';
+import { ShoppingCartService } from './data/services/shoppingCart.service';
+import { ShoppingCartComponent } from './layout/shopping-cart/shopping-cart.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { ItemsComponent } from './layout/items/items.component';
     TopNavbarLoggedComponent,
     LoadingComponent,
     ItemsComponent,
+    ShoppingCartComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +54,8 @@ import { ItemsComponent } from './layout/items/items.component';
       provide: LocationStrategy,
       useClass: HashLocationStrategy
     },
-    ItemService
+    ItemService,
+    ShoppingCartService
   ],
   bootstrap: [AppComponent]
 })

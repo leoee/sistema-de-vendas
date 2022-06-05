@@ -16,8 +16,16 @@ export class ItemService {
     return this.http.get<any[]>(`${this.url}/items`)
   }
 
+  public loadItemById (itemId: any): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url}/items/${itemId}`)
+  }
+
   public loadItemByName (name: string): Observable<any[]> {
     let params = new HttpParams().set('name', name);
+    return this.http.get<any[]>(`${this.url}/items`, {params: params});
+  }
+
+  public loadItemByParams(params: HttpParams): Observable<any[]> {
     return this.http.get<any[]>(`${this.url}/items`, {params: params});
   }
 

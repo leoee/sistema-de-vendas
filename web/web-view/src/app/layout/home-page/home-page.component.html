@@ -1,7 +1,97 @@
-
-<div>
+<div id="main">
   <app-top-navbar-logged></app-top-navbar-logged>
 
-  <p>em construção</p>
+  <div id="body">
+    <div id="top_buttons">
+      <div class="input-group">
+        <input class="form-control" placeholder="Nome" type="text" [(ngModel)]="name">
+      </div>
+      <div>
+        <small>de</small>
+        <input class="form-control" type="number" placeholder="valor mínimo" [(ngModel)]="minPrice">
+      </div>
+      <div>
+        <small>ate</small>
+        <input class="form-control" type="number" placeholder="valor máximo" [(ngModel)]="maxPrice">
+      </div>
+      <div id="checkbox-stock" class="form-check">
+        <input class="form-check-input" type="checkbox" value="" [(ngModel)]="stockQuantity" id="flexInStock">
+        <label class="form-check-label" for="flexCheckDefault">
+          Somente com estoque
+        </label>
+      </div>
+      <button id="look_button" (click)="filterItemsByParameter()" mat-raised-button>Filtrar</button>
+    </div>
+    <div id="list-items" *ngIf="(items$ | async) as items; else loadingOrError">
+      <div *ngFor="let item of items" (click)="openViewItemModal(ViewItem, item)">
+        <a class="list-group-item list-group-item-action flex-column align-items-start">
+          <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">{{item.name}}</h5>
+          <div class="d-flex w-100" style="justify-content: space-around;">
+            <img style="margin-top: 1%;" [src]="item?.imageUrl" alt="Random slide">
+            <p class="mb-1">{{item.description}}</p>
+            <p class="mb-1">{{item.specification}}</p>
+          </div>
+          <h4>R$: {{item.price}}</h4>
+          <h4 id="stock-field" *ngIf="item.stockQuantity > 0">EM ESTOQUE</h4>
+        </a>
+      </div>
+    </div>
+  </div>
 
 </div>
+
+<ng-template #ViewItem let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{currentItemToAnalyze.name}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form" (ngSubmit)="addItemOnShoppingCart(form.value)">
+      <img style="margin-top: 1%;" [src]="currentItemToAnalyze?.imageUrl" alt="Random slide">
+      <div class="form-group">
+        <label for="email">Descrição</label>
+        <div class="input-group">
+          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" readonly [placeholder]="currentItemToAnalyze?.description" rows="5"></textarea>
+        </div>
+        <label for="cpf">Especificação</label>
+        <div class="input-group">
+          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" readonly [placeholder]="currentItemToAnalyze?.specification" rows="5"></textarea>
+        </div>
+        <label for="number">Preço</label>
+        <div class="input-group">
+          <input class="form-control" type="number" [placeholder]="currentItemToAnalyze?.price" readonly>
+        </div>
+        <label for="number">Quantidade em estoque</label>
+        <div class="input-group">
+          <input class="form-control" type="number" [placeholder]="currentItemToAnalyze?.stockQuantity" readonly>
+        </div>
+      </div>
+
+      <div style="display: flex;">
+        <div style="display: inline;">
+          <small>Qnt. adicionada</small>
+          <input class="form-control" type="number" value="1" placeholder="Quantidade" formControlName="stockQuantityAdded">
+        </div>
+        <div class="modal-footer">
+          <button
+            type="submit" [disabled]="currentItemToAnalyze?.stockQuantity == 0"
+            class="btn btn-outline-dark">Adicionar ao carrinho</button>
+        </div>
+      </div>
+
+      
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #loadingOrError>
+  <app-error *ngIf="error$ | async; else loading"></app-error>
+
+  <ng-template #loading>
+    <div class="spinner-border" role="status">
+      <span class="sr-only"></span>
+    </div>
+  </ng-template>
+</ng-template>

@@ -6,6 +6,7 @@ import { CreateUserComponent } from './layout/create-user/create-user.component'
 import { HomePageComponent } from './layout/home-page/home-page.component';
 import { ItemsComponent } from './layout/items/items.component';
 import { MainComponent } from './layout/main/main.component';
+import { ShoppingCartComponent } from './layout/shopping-cart/shopping-cart.component';
 
 
 const routes: Routes = [
@@ -22,6 +23,11 @@ const routes: Routes = [
   {
     path: 'home-page',
     component: HomePageComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'shopping-cart',
+    component: ShoppingCartComponent,
     canActivate: [AuthGuard]
   },
   {

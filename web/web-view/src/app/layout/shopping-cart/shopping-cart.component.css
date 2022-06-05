@@ -29,13 +29,27 @@
   background-color: rgb(241, 238, 232);
 }
 
-#top_buttons {
+#total {
   display: flex;
-  justify-content: space-between;
 }
 
 #top_buttons .input-group {
   width: 15%;
+}
+
+#total-field {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+#total-field h1 {
+  font-weight: bolder;
+  margin-left: 2%;
+}
+
+#total-field h2 {
+  margin-left: 2%;
 }
 
 #stock-field {
@@ -45,4 +59,9 @@
 
 #checkbox-stock {
   margin-top: auto;
+}
+
+#top-icons-sc {
+  display: flex;
+  justify-content: space-between;
 }

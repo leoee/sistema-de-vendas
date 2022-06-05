@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  // api: 'https://sistema-de-vendas-api.herokuapp.com/api'
   api: 'http://localhost:8080/api'
 };
 
