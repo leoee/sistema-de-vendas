@@ -10,6 +10,7 @@ import com.puc.sistemasdevendas.model.repositories.OrderRepository;
 import com.puc.sistemasdevendas.model.repositories.UserRepository;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -181,6 +182,7 @@ public class OrderService {
     public List<Order> getAllMineOrders(String token) {
         User fetchedUser = this.getUserFromToken(token);
         Query query = new Query();
+        query.with(Sort.by(Sort.Direction.DESC, "createdDate"));
         query.addCriteria(where("ownerId").is(fetchedUser.getId()));
         return this.mongoTemplate.find(query, Order.class);
     }
