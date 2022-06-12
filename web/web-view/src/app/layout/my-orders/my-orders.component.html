@@ -48,28 +48,32 @@
             </div>
           </div>
           <div *ngIf="order.orderStatus == 'WAITING_PAYMENT'" class="track">
-            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
-            <div class="step"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
             <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
             <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
           </div>
           <div *ngIf="order.orderStatus == 'PAYMENT_CONFIRMED'" class="track">
-            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
-            <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
             <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
             <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
           </div>
           <div *ngIf="order.orderStatus == 'IN_TRANSIT'" class="track">
-            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
-            <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
             <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
             <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
           </div>
           <div *ngIf="order.orderStatus == 'DELIVERED'" class="track">
-            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
-            <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
             <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
             <div class="step active"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'CANCELLED'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-xmark"></i> </span> <span class="text">CANCELADO</span> </div>
           </div>
         </a>
       </div>

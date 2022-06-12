@@ -1,14 +1,12 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { Item } from 'src/app/data/dtos/item.model';
 import { ItemService } from 'src/app/data/services/item.service';
 import { OrderService } from 'src/app/data/services/order.service';
-import { ShoppingCartService } from 'src/app/data/services/shoppingCart.service';
 
 @Component({
   selector: 'app-my-orders',

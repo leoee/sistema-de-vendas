@@ -24,6 +24,7 @@ import { ShoppingCartService } from './data/services/shoppingCart.service';
 import { ShoppingCartComponent } from './layout/shopping-cart/shopping-cart.component';
 import { MyOrdersComponent } from './layout/my-orders/my-orders.component';
 import { OrderService } from './data/services/order.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { OrderService } from './data/services/order.service';
     FormsModule,
     MatIconModule,
     MatButtonModule,
+    FontAwesomeModule,
     
     CoreModule,
     
