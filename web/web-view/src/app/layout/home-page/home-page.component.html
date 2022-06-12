@@ -28,8 +28,8 @@
           <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">{{item.name}}</h5>
           <div class="d-flex w-100" style="justify-content: space-around;">
             <img style="margin-top: 1%;" [src]="item?.imageUrl" alt="Random slide">
-            <p class="mb-1">{{item.description}}</p>
-            <p class="mb-1">{{item.specification}}</p>
+            <p class="mb-1" style="margin-left: 1%;">{{item.description}}</p>
+            <p class="mb-1" style="margin-left: 1%;">{{item.specification}}</p>
           </div>
           <h4>R$: {{item.price}}</h4>
           <h4 id="stock-field" *ngIf="item.stockQuantity > 0">EM ESTOQUE</h4>

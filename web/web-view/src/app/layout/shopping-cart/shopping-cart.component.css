@@ -25,6 +25,11 @@
   cursor: pointer;
 }
 
+#look_button {
+  padding-right: 1%;
+  width: 20%;
+}
+
 #look_button:hover {
   background-color: rgb(241, 238, 232);
 }
@@ -81,4 +86,8 @@
 
 #empty-sc h3 {
   font-weight: bolder;
+}
+
+#img_pix {
+  width: 50%;
 }

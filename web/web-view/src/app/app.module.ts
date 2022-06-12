@@ -22,6 +22,8 @@ import { ItemService } from './data/services/item.service';
 import { ItemsComponent } from './layout/items/items.component';
 import { ShoppingCartService } from './data/services/shoppingCart.service';
 import { ShoppingCartComponent } from './layout/shopping-cart/shopping-cart.component';
+import { MyOrdersComponent } from './layout/my-orders/my-orders.component';
+import { OrderService } from './data/services/order.service';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import { ShoppingCartComponent } from './layout/shopping-cart/shopping-cart.comp
     LoadingComponent,
     ItemsComponent,
     ShoppingCartComponent,
+    MyOrdersComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,7 +58,8 @@ import { ShoppingCartComponent } from './layout/shopping-cart/shopping-cart.comp
       useClass: HashLocationStrategy
     },
     ItemService,
-    ShoppingCartService
+    ShoppingCartService,
+    OrderService
   ],
   bootstrap: [AppComponent]
 })

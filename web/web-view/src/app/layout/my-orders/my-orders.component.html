@@ -10,21 +10,67 @@
         <h1>{{ (shoppingCart$ | async)?.total }}</h1>
       </div>
     </div>
-    <div id="list-items" *ngIf="(shoppingCart$ | async) as shoppingCart; else loadingOrError">
+    <div id="list-items" *ngIf="(orders$ | async) as orders; else loadingOrError">
       <div id="empty-sc" *ngIf="(shoppingCart$ | async)?.shoppingCartItemList.length == 0">
-        <h3>Seu carrinho está vazio.</h3>
+        <h3>Você ainda não tem pedidos.</h3>
       </div>
-      <div *ngFor="let item of shoppingCart.shoppingCartItemList">
+      <div *ngFor="let order of orders">
         <a class="list-group-item list-group-item-action flex-column align-items-start">
           <div id="top-icons-sc">
-            <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">{{item.name}}</h5>
+            <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">Pedido {{order.id}}</h5>
+            <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">{{mapOrderStatus.get(order.orderStatus)}}</h5>
+          </div>
+          <h4>Total: R$ {{order.total}}</h4>
+          <h4>Criado em {{order.createdDate.substring(0, 10)}}</h4>
+          <hr>
+          <h4 id="sub_info_title">Informações de Pagamento</h4>
+          <div id="payments_info">
+            <p>Estado do pagamento: {{mapPaymentStatus.get(order.invoice.paymentStatus)}}</p>
+            <p>Forma de pagamento: {{mapPaymentMethods.get(order.invoice.paymentMethod)}}</p>
+          </div>
+          <hr>
+          <div id="sub_info">
             <div>
-              <mat-icon title="Visualizar item" (click)="openViewItemModal(ViewItem, item)">visibility</mat-icon>
-              <mat-icon (click)="openEditShoppingCartItemAmount(EditShoppingCartItem, item)">edit</mat-icon>
-              <mat-icon title="Remover do shopping cart" (click)="openDeleteShoppingCarttemModal(DeleteShoppingCartItem, item)">remove_shopping_cart</mat-icon>
+              <h4 id="sub_info_title">Itens</h4>
+              <div *ngFor="let items of order.orderItems">
+                <ul>
+                  <li>Nome: {{items.name}}</li>
+                  <p>Qnt: {{items.amount}}</p>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <h4 id="sub_info_title">Endereço de Entrega</h4>
+              <p *ngIf="order.deliveryAddress.notes">Notas de entrega: {{order.deliveryAddress?.notes}}</p>
+              <p>Local: {{order.deliveryAddress.address?.place}}</p>
+              <p>Cidade: {{order.deliveryAddress.address?.city}}</p>
+              <p>CEP: {{order.deliveryAddress.address?.zip}}</p>
             </div>
           </div>
-          <h4>Amount: {{item.amount}}</h4>
+          <div *ngIf="order.orderStatus == 'WAITING_PAYMENT'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'PAYMENT_CONFIRMED'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'IN_TRANSIT'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'DELIVERED'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
         </a>
       </div>
     </div>
