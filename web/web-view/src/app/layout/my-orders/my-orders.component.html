@@ -3,12 +3,7 @@
 
   <div id="body">
     <div id="total">
-      <button [disabled]="(shoppingCart$ | async)?.shoppingCartItemList.length == 0" id="look_button" (click)="openCheckoutShoppingCart(CheckoutShoppingCart)" mat-raised-button>Finalizar compra</button>
-      <div id="total-field">
-        <mat-icon>shopping_cart</mat-icon>
-        <h2>Total ({{ (shoppingCart$ | async)?.shoppingCartItemList.length}} item) R$:</h2>
-        <h1>{{ (shoppingCart$ | async)?.total }}</h1>
-      </div>
+      <button id="look_button" (click)="openViewModal(CheckoutShoppingCart)" mat-raised-button>Ver QR code de pagamento</button>
     </div>
     <div id="list-items" *ngIf="(orders$ | async) as orders; else loadingOrError">
       <div id="empty-sc" *ngIf="(shoppingCart$ | async)?.shoppingCartItemList.length == 0">
@@ -81,107 +76,16 @@
   </div>
 </div>
 
-<ng-template #ViewItem let-modal>
-  <div *ngIf="(item$ | async) as item; else loadingOrError" class="modal-header">
-    <h1 class="modal-title" id="modal-basic-title">{{item?.name}}</h1>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div *ngIf="(item$ | async) as item; else loadingOrError" class="modal-body">
-    <form>
-      <img style="margin-top: 0.5%;" [src]="item?.imageUrl" alt="Random slide">
-      <div class="form-group">
-        <label for="email">Descrição</label>
-        <div class="input-group">
-          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" readonly [placeholder]="item?.description" rows="5"></textarea>
-        </div>
-        <label for="cpf">Especificação</label>
-        <div class="input-group">
-          <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" readonly [placeholder]="item?.specification" rows="5"></textarea>
-        </div>
-        <label for="number">Preço</label>
-        <div class="input-group">
-          <input class="form-control" type="number" [placeholder]="item?.price" readonly>
-        </div>
-        <label for="number">Quantidade em estoque</label>
-        <div class="input-group">
-          <input class="form-control" type="number" [placeholder]="item?.stockQuantity" readonly>
-        </div>
-      </div>      
-    </form>
-  </div>
-</ng-template>
-
-<ng-template #DeleteShoppingCartItem let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Confirmar ação</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <form (ngSubmit)="modal.close()">
-    <div class="modal-body">
-      <p>{{'Tem certeza que deseja remover ' + currentItemToDelete.name + ' do carrinho?'}}</p>
-    </div>
-    <div class="modal-footer">
-      <button type="submit" class="btn btn-danger">Remover</button>
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-    </div>
-  </form>
-</ng-template>
-
-<ng-template #EditShoppingCartItem let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Confirmar ação</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <form [formGroup]="form" (ngSubmit)="modal.close()">
-    <label for="cpf">Quantidade</label>
-    <div class="input-group">
-      <input class="form-control" type="number" [placeholder]="currentItemToEdit?.amount" formControlName="amount">
-    </div>
-    <div class="modal-footer">
-      <button type="submit" (click)="updateItemAmont(form.value)" class="btn btn-danger">Atualizar</button>
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-    </div>
-  </form>
-</ng-template>
-
-
 <ng-template #CheckoutShoppingCart let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Finalização de compra</h4>
+    <h4 class="modal-title" id="modal-basic-title">Informação para pagamento</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <form [formGroup]="checkoutForm" (ngSubmit)="modal.close()" style="margin-left: 2%; margin-right: 2%">
-    <div id="info-checkout">
-      <h1>Total ({{ (shoppingCart$ | async)?.shoppingCartItemList.length}} item) R$:</h1>
-      <h1>{{ (shoppingCart$ | async)?.total }}</h1>
-    </div>
-    <div *ngIf="(shoppingCart$ | async) as shoppingCart; else loadingOrError">
-      <div *ngFor="let item of shoppingCart.shoppingCartItemList">
-        <h4>- {{item.name}}</h4>
-      </div>
-    </div>
-    <label for="cpf">Notas para entrega</label>
-    <div class="input-group">
-      <textarea class="form-control" style="border: 1px solid rgb(184, 183, 183);" placeholder="Observações para entrega" formControlName="notesForDelivery" rows="2"></textarea>
-    </div>
-    <label for="cpf">Método da pagamento</label>
-    <select class="form-select" aria-label="Default select example" formControlName="paymentMethod">
-      <option value="PIX_ONLINE" selected>PIX ONLINE</option>
-    </select>
+  <form style="margin-left: 2%; margin-right: 2%">
     <h2>Efetue o pagamento através do QR Code abaixo. No pagamento da mensagem, deve-se informar o e-mail da conta cadastrada.</h2>
     <img src="../../../assets//pix_proj.png" id="img_pix">
-    <div class="modal-footer">
-      <button type="submit" (click)="checkoutShoppingCart(checkoutForm.value)" class="btn btn-danger">Finalizar compra</button>
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-    </div>
   </form>
 </ng-template>
 
