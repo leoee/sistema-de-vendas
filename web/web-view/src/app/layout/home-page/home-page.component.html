@@ -35,6 +35,9 @@
           <h4 id="stock-field" *ngIf="item.stockQuantity > 0">EM ESTOQUE</h4>
         </a>
       </div>
+      <div id="empty_items" *ngIf="items.length == 0">
+        <p>Não existem itens de acordo com o filtro.</p>
+      </div>
     </div>
   </div>
 
@@ -88,7 +91,9 @@
 </ng-template>
 
 <ng-template #loadingOrError>
-  <app-error *ngIf="error$ | async; else loading"></app-error>
+  <div id="empty_items" *ngIf="error$ | async; else loading">
+    <p>Não existem itens de acordo com o filtro.</p>
+  </div>
 
   <ng-template #loading>
     <div class="spinner-border" role="status">

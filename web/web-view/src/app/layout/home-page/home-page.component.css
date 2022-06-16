@@ -51,3 +51,10 @@
 #checkbox-stock {
   margin-top: auto;
 }
+
+#empty_items {
+  font-weight: bolder;
+  align-items: center;
+  margin-top: 5%;
+  margin-left: 30%;
+}

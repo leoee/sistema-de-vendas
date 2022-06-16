@@ -2,9 +2,9 @@ import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { map, takeUntil } from 'rxjs/operators';
+import { catchError, map, takeUntil } from 'rxjs/operators';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { Item } from 'src/app/data/dtos/item.model';
 import { ShoppingCartAddItem } from 'src/app/data/dtos/shoppingCartAddItem.model';
@@ -80,7 +80,11 @@ export class HomePageComponent implements OnInit {
       });
       this.items$ = this.itemService
       .loadItemByParams(params)
-      .pipe(map(items => items));
+      .pipe(catchError(({ error: httpError }: HttpErrorResponse) => {
+        this.error$.next(true)
+
+        return of(null);
+      }));
     }
   }
 

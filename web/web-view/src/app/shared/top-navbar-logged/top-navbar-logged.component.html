@@ -19,7 +19,7 @@
         <div *ngIf="(user$ | async)?.role == 'ADMIN'">
           <a class="dropdown-item">Gerenciar usuários</a>
           <a class="dropdown-item" routerLink="/manage-items">Gerenciar Itens</a>
-          <a class="dropdown-item">Gerenciar Pedidos</a>
+          <a class="dropdown-item" routerLink="/manage-orders">Gerenciar Pedidos</a>
         </div>
         <a (click)="signOut()" routerLink="/home" class="dropdown-item">Sair</a>
       </div>

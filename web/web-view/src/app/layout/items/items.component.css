@@ -35,3 +35,10 @@
 #top_buttons .input-group {
   width: 15%;
 }
+
+#empty_items {
+  font-weight: bolder;
+  align-items: center;
+  margin-top: 5%;
+  margin-left: 30%;
+}

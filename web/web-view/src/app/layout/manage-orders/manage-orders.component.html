@@ -1,0 +1,178 @@
+<div id="main">
+  <app-top-navbar-logged></app-top-navbar-logged>
+
+  <div id="body">
+    <div id="top_buttons">
+      <div class="input-group">
+        <input class="form-control" placeholder="Email" type="text" [(ngModel)]="email">
+      </div>
+      <div class="input-group">
+        <p id="title_filter">Estado do pedido</p>
+        <select class="form-select" [(ngModel)]="orderStatus">
+          <option value=""></option>
+          <option value="WAITING_PAYMENT">AGUARDANDO PAGAMENTO</option>
+          <option value="PAYMENT_CONFIRMED">PAGAMENTO CONFIRMADO</option>
+          <option value="IN_TRANSIT">EM TRANSITO</option>
+          <option value="DELIVERED">ENTREGUE</option>
+          <option value="CANCELLED">CANCELADO</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <p id="title_filter">Estado do pagamento</p>
+        <select class="form-select" [(ngModel)]="paymentStatus">
+          <option value=""></option>
+          <option value="WAITING_PAYMENT">AGUARDANDO PAGAMENTO</option>
+          <option value="PAYMENT_CAPTURED">PAGAMENTO CONFIRMADO</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <input class="form-control" placeholder="Id do pedido" type="text" [(ngModel)]="id">
+      </div>
+      <button id="look_button" (click)="filterOrdersByParameter()" mat-raised-button>Filtrar</button>
+    </div>
+    <div id="list-items" *ngIf="(orders$ | async) as orders; else loadingOrError">
+      <div id="empty_orders" *ngIf="orders.length == 0">
+        <p>Não existem pedidos de acordo com o filtro.</p>
+      </div>
+      <div *ngFor="let order of orders">
+        <a class="list-group-item list-group-item-action flex-column align-items-start">
+          <div id="top-icons-sc">
+            <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">Pedido {{order.id}}</h5>
+            <h5 style="font-size: larger; font-weight: bolder;" class="mb-1">{{mapOrderStatus.get(order.orderStatus)}}</h5>
+            <div>
+              <mat-icon title="Editar um item" (click)="openViewModal(EditOrderModal, order)">edit</mat-icon>
+              <mat-icon title="Confirmar recebimento de pagamento" (click)="confirmPayment(order)">attach_money</mat-icon>
+              <mat-icon title="Relatório de mudanças de estados" (click)="openViewModal(ViewOrderChanges, order)">chat</mat-icon>
+            </div>
+          </div>
+          <h4>Total: R$ {{order.total}}</h4>
+          <h4>Criado em {{order.createdDate.substring(0, 10)}}</h4>
+          <h4>Id do dono: {{order.ownerId}}</h4>
+          <hr>
+          <h4 id="sub_info_title">Informações de Pagamento</h4>
+          <div id="payments_info">
+            <p>Estado do pagamento: {{mapPaymentStatus.get(order.invoice.paymentStatus)}}</p>
+            <p>Forma de pagamento: {{mapPaymentMethods.get(order.invoice.paymentMethod)}}</p>
+          </div>
+          <hr>
+          <div id="sub_info">
+            <div>
+              <h4 id="sub_info_title">Itens</h4>
+              <div *ngFor="let items of order.orderItems">
+                <ul>
+                  <li>Nome: {{items.name}}</li>
+                  <p>Qnt: {{items.amount}}</p>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <h4 id="sub_info_title">Endereço de Entrega</h4>
+              <p *ngIf="order.deliveryAddress.notes">Notas de entrega: {{order.deliveryAddress?.notes}}</p>
+              <p>Local: {{order.deliveryAddress.address?.place}}</p>
+              <p>Cidade: {{order.deliveryAddress.address?.city}}</p>
+              <p>CEP: {{order.deliveryAddress.address?.zip}}</p>
+            </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'WAITING_PAYMENT'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'PAYMENT_CONFIRMED'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'IN_TRANSIT'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'DELIVERED'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">PAGAMENTO CONFIRMADO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> EM TRANSITO </span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">ENTREGUE</span> </div>
+          </div>
+          <div *ngIf="order.orderStatus == 'CANCELLED'" class="track">
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-money-bill-1-wave"></i> </span> <span class="text">AGUARDANDO PAGAMENTO</span> </div>
+            <div class="step active"> <span class="icon"> <i class="fa-solid fa-xmark"></i> </span> <span class="text">CANCELADO</span> </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #EditOrderModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pedido: {{currentOrderToEdit?.id}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="modal.close()" style="margin-left: 3%;margin-right: 3%;">
+    <h4 class="modal-title" id="modal-basic-title">Estado atual do pedido: {{mapOrderStatus.get(currentOrderToEdit?.orderStatus)}}</h4>
+    <h4 class="modal-title" id="modal-basic-title">Estado atual do pagamento: {{mapPaymentStatus.get(currentOrderToEdit?.invoice.paymentStatus)}}</h4>
+    <hr>
+    <label>Atualizar estado do pedido</label>
+    <div class="input-group">
+      <select class="form-select" formControlName="orderStatus">
+        <option value=""></option>
+        <option value="WAITING_PAYMENT">AGUARDANDO PAGAMENTO</option>
+        <option value="PAYMENT_CONFIRMED">PAGAMENTO CONFIRMADO</option>
+        <option value="IN_TRANSIT">EM TRANSITO</option>
+        <option value="DELIVERED">ENTREGUE</option>
+        <option value="CANCELLED">CANCELADO</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" (click)="updateOrderStatus(form.value)" class="btn btn-danger">Atualizar</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #ViewOrderChanges let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Relatório de mudanças: {{currentOrderToEdit?.id}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div *ngFor="let orderChanges of currentOrderToEdit?.changeLogs">
+    <div id="order-change-log">
+      <div style="display: flex;">
+        <h4>Saiu de </h4>
+        <h4 class="modal-title" id="modal-basic-information">{{mapOrderStatus.get(orderChanges.previousStatus)}}</h4>
+      </div>
+      <div style="display: flex;">
+        <h4>Foi para </h4>
+        <h4 class="modal-title" id="modal-basic-information">{{mapOrderStatus.get(orderChanges.currentStatus)}}</h4>
+      </div>
+      <div style="display: flex;">
+        <h4>Data </h4>
+        <h4 class="modal-title" id="modal-basic-information">{{orderChanges.date}}</h4>
+      </div>     
+      <hr>
+    </div>
+  </div>
+  <div>
+
+  </div>
+</ng-template>
+
+<ng-template #loadingOrError>
+  <div id="empty_orders" *ngIf="error$ | async; else loading">
+    <p>Não existem pedidos de acordo com o filtro.</p>
+  </div>
+
+  <ng-template #loading>
+    <div class="spinner-border" role="status">
+      <span class="sr-only"></span>
+    </div>
+  </ng-template>
+</ng-template>

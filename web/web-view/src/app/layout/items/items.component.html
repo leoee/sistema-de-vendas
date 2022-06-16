@@ -26,6 +26,9 @@
           <small>{{item.specification}}</small>
         </a>
       </div>
+      <div id="empty_items" *ngIf="items.length == 0">
+        <p>Não existem itens de acordo com o filtro.</p>
+      </div>
     </div>
   </div>
 
@@ -114,11 +117,6 @@
         <img style="margin-top: 1%;" [src]="currentItemToEdit?.imageUrl" alt="Random slide">
       </div>
 
-      <!-- <div class="modal-footer">
-        <button
-          type="submit"
-          class="btn btn-outline-dark">Salvar</button>
-      </div> -->
     </form>
   </div>
 </ng-template>
@@ -142,7 +140,9 @@
 </ng-template>
 
 <ng-template #loadingOrError>
-  <app-error *ngIf="error$ | async; else loading"></app-error>
+  <div id="empty_items" *ngIf="error$ | async; else loading">
+    <p>Não existem itens de acordo com o filtro.</p>
+  </div>
 
   <ng-template #loading>
     <div class="spinner-border" role="status">
