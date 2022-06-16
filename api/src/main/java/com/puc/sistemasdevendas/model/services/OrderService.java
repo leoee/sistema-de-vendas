@@ -181,6 +181,8 @@ public class OrderService {
             query.addCriteria(where("invoice.paymentStatus").is(paymentStatus));
         }
 
+        query.with(Sort.by(Sort.Direction.DESC, "createdDate"));
+
         return this.mongoTemplate.find(query, Order.class);
     }
 
