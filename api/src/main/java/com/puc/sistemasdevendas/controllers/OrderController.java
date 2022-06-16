@@ -42,12 +42,12 @@ public class OrderController {
                                            example = "22233322",
                                            required = false)
                                            Optional<String> id,
-                                   @RequestParam("ownerId")
-                                   @ApiParam(name = "ownerId",
-                                           value = "Parâmetro para filtrar pedidos a partir de id do cliente",
+                                   @RequestParam("email")
+                                   @ApiParam(name = "email",
+                                           value = "Parâmetro para filtrar pedidos a partir de um e-mail",
                                            example = "99222331",
                                            required = false)
-                                           Optional<String> ownerId,
+                                           Optional<String> ownerEmail,
                                    @RequestParam("orderStatus")
                                    @ApiParam(name = "orderStatus",
                                            value = "Parâmetro para filtrar pedidos a partir de seu estado",
@@ -61,7 +61,7 @@ public class OrderController {
                                            required = false)
                                            Optional<String> paymentStatus) {
         return ResponseEntity.ok(this.orderService.
-                getOrders(bearerToken.substring(6), id.orElse(null), ownerId.orElse(null),
+                getOrders(bearerToken.substring(6), id.orElse(null), ownerEmail.orElse(null),
                         orderStatus.orElse(null), paymentStatus.orElse(null)));
     }
 

@@ -151,7 +151,7 @@ public class OrderService {
         return fetchedUser;
     }
 
-    public List<Order> getOrders(String token, String id, String ownerId, String orderStatus, String paymentStatus) {
+    public List<Order> getOrders(String token, String id, String ownerEmail, String orderStatus, String paymentStatus) {
         User fetchedUser = this.getUserFromToken(token);
         Query query = new Query();
 
@@ -164,8 +164,13 @@ public class OrderService {
             query.addCriteria(where("id").is(id));
         }
 
-        if (ownerId != null) {
-            query.addCriteria(where("ownerId").is(ownerId));
+        if (ownerEmail != null) {
+            User orderOwner = this.userRepository.findUserByEmail(ownerEmail).orElse(null);
+
+            if (orderOwner == null) {
+                throw new NotFoundException("Not found user with e-mail: " + ownerEmail);
+            }
+            query.addCriteria(where("ownerId").is(orderOwner.getId()));
         }
 
         if (orderStatus != null) {
