@@ -6,4 +6,5 @@ export interface Item {
   name: string
   imageUrl: string
   specification: string
+  active: boolean
 }

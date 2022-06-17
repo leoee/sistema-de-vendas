@@ -40,7 +40,10 @@
     </button>
   </div>
   <div *ngIf="(item$ | async) as item; else loadingOrError" class="modal-body">
-    <form>
+    <div *ngIf="item.active == false">
+      <p>Este item foi removido do sistema. Remove-o de seu carrinho.</p>
+    </div>
+    <form *ngIf="item.active == true">
       <img style="margin-top: 0.5%;" [src]="item?.imageUrl" alt="Random slide">
       <div class="form-group">
         <label for="email">Descrição</label>
