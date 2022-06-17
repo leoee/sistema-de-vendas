@@ -30,6 +30,7 @@ public class ItemService {
     public Item createItem(String token, Item item) {
         try {
             this.authorizeOperation(token, "create");
+            item.setActive(true);
             return this.itemRepository.insert(item);
         } catch (Exception e) {
             this.logger.error("Failed to create item: " + e.getMessage());
@@ -54,12 +55,14 @@ public class ItemService {
     public void deleteItem(String token, String itemId) {
         try {
             this.authorizeOperation(token, "delete");
+            Item fetchedItem = this.itemRepository.findById(itemId).orElse(null);
 
-            if (!this.itemRepository.existsById(itemId)) {
+            if (fetchedItem == null) {
                 throw new NotFoundException("Could not find item with id: " + itemId);
             }
 
-            this.itemRepository.deleteById(itemId);
+            fetchedItem.setActive(false);
+            this.itemRepository.save(fetchedItem);
         } catch(Exception e) {
             this.logger.error("Failed to delete item: " + itemId + " | " + e.getMessage());
             throw e;
@@ -86,6 +89,8 @@ public class ItemService {
         } else if (minPrice != null) {
             query.addCriteria(where("price").gte(minPrice).andOperator(where("price").lte(maxPrice)));
         }
+
+        query.addCriteria(where("active").is(true));
 
         return this.mongoTemplate.find(query, Item.class);
     }

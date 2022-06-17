@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -44,6 +46,10 @@ public class ItemServiceTest {
         when(this.itemRepository.insert((Item) any())).thenReturn(expectedItem);
 
         this.itemService.createItem("123", expectedItem);
+
+        expectedItem.setActive(true);
+
+        verify(this.itemRepository, times(1)).insert(eq(expectedItem));
     }
 
     @Test
@@ -74,12 +80,16 @@ public class ItemServiceTest {
     @Test
     public void shouldDeleteItem() {
         final String mockEmail = "mail@mail.com";
+        Item expectedItem = new Item();
 
         when(this.decodeToken.getGetFromToken(any())).thenReturn(mockEmail);
         when(this.userService.isAdminRole(mockEmail)).thenReturn(true);
-        when(this.itemRepository.existsById(any())).thenReturn(true);
+        when(this.itemRepository.findById(any())).thenReturn(Optional.of(expectedItem));
 
         this.itemService.deleteItem("123", "itemId");
+
+        expectedItem.setActive(false);
+        verify(this.itemRepository, times(1)).save(eq(expectedItem));
     }
 
     @Test
@@ -88,7 +98,7 @@ public class ItemServiceTest {
 
         when(this.decodeToken.getGetFromToken(any())).thenReturn(mockEmail);
         when(this.userService.isAdminRole(mockEmail)).thenReturn(true);
-        when(this.itemRepository.existsById(any())).thenReturn(false);
+        when(this.itemRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
                 () ->  this.itemService.deleteItem("123", "itemId"));
@@ -102,6 +112,7 @@ public class ItemServiceTest {
 
         Query expectedQuery = new Query();
         expectedQuery.addCriteria(where("name").is(expectedName));
+        expectedQuery.addCriteria(where("active").is(true));
         expectedQuery.addCriteria(where("stockQuantity").gte(1));
         expectedQuery.addCriteria(where("price").gte(minPrice).andOperator(where("price").lte(maxPrice)));
 
