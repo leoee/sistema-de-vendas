@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -16,8 +17,10 @@ public class Item {
     @Null(message = "Can not set id")
     private String id;
     @NotNull(message = "stock quantity can not be null")
+    @Min(1)
     private Integer stockQuantity;
     @NotNull(message = "price quantity can not be null")
+    @Min(0)
     private Double price;
     @NotEmpty(message = "description quantity can not be empty")
     private String description;
