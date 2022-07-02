@@ -39,7 +39,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div *ngIf="(item$ | async) as item; else loadingOrError" class="modal-body">
+  <div *ngIf="(item$ | async) as item" class="modal-body">
     <div *ngIf="item.active == false">
       <p>Este item foi removido do sistema. Remove-o de seu carrinho.</p>
     </div>

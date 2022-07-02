@@ -2,5 +2,20 @@
   <h1>Sistema de Vendas</h1>
   <h3 routerLink="/home">Home</h3>
   <h2>|</h2>
-  <h3>Sobre</h3>
+  <h3 (click)="openModal(AboutModal)">Sobre</h3>
 </div>
+
+<ng-template #AboutModal let-modal id="aboutModal">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title" style="font-weight: bolder;">Sobre esta aplicação</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Este é um projeto desenvolvido para o curso de pós graduação da PUC Minas.</p>
+    <p>Todos os itens ofertados aqui são não estão à venda. As imagens e informações apresentadas sobre os mesmos foram retiradas da internet.</p>
+    <hr>
+    <p>A aplicação está online para fim de avaliação.</p>
+  </div>
+</ng-template>

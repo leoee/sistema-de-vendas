@@ -72,7 +72,7 @@ public class OrderController {
                 getAllMineOrders(bearerToken.substring(6)));
     }
 
-    @ApiOperation(value = "Confirmar pagamento de um pedido")
+    @ApiOperation(value = "Atualizar estado do pedido")
     @RequestMapping(value = "/orders/{orderId}", method = RequestMethod.PATCH)
     ResponseEntity<?> updateOrderStatus(@RequestHeader("Authorization") final String bearerToken,
                                         @PathVariable("orderId")

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-top-navbar',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TopNavbarComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private readonly modal: NgbModal,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  public openModal (content: any): void {
+    this.modal.open(content, { centered: true })
+      .result.then(
+        () => {},
+        () => this.modal.dismissAll()
+      )
   }
 
 }

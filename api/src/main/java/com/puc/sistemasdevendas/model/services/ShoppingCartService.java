@@ -64,7 +64,8 @@ public class ShoppingCartService {
             }));
 
             fetchedSc.setShoppingCartItemList(this.updateShoppingCartList(fetchedSc, fetchedItem, quantity));
-            fetchedSc.setTotal(Double.valueOf(UK_DF.format(fetchedSc.getTotal() + fetchedItem.getPrice() * quantity)));
+            String test = UK_DF.format(fetchedSc.getTotal() + fetchedItem.getPrice() * quantity).replace(",", "");
+            fetchedSc.setTotal(Double.valueOf(test));
 
             return this.shoppingCartRepository.save(fetchedSc);
         } catch (Exception e) {

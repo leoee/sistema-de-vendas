@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Unwrapped;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -30,6 +31,5 @@ public class Item {
     private String imageUrl;
     @NotEmpty(message = "specification quantity can not be empty")
     private String specification;
-    @Null(message = "Can not set active")
     private boolean active;
 }
